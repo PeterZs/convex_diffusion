@@ -68,7 +68,7 @@ p.inv = inv;
 %% Optimization-specific values
 if strcmp(type,'cvx')
 	
-	p.x = 0.815;		% Waveform asymmetry factor [0 .. 1]
+	p.x = 0.745;			% Waveform asymmetry factor [0 .. 1]
 	
 	% Total variation regularization
 	p.TV = false;		% Slew rate TV regularization flag [Bool]
@@ -76,10 +76,9 @@ if strcmp(type,'cvx')
 	
 	% Concomitant field correction
 	p.coco = true;		% Concomitant field correction flag [Bool]
-	p.mMax = 2e-2;		% Maxwell-index limit [s^1/2*T/m]
+	p.mMax = 1.55e-2;		% Maxwell-index limit [s^1/2*T/m]
 	
 	% Optimization limits
 	p.tMax = 0.2;		% Terminate bisection search when tEnc>=tMax [s]
 	p.nMax = round(p.tMax/dt);
 	
-end
