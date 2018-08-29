@@ -13,21 +13,21 @@ Install from Github source:
 ```
 git clone https://github.com/alen-mujkanovic/convex_diffusion.git
 git clone https://github.com/yalmip/YALMIP
-xcopy /s .\convex_diffusion-master\operators\@sdpvar\*.* .\YALMIP-master\@sdpvar
+xcopy /s .\convex_diffusion\operators\@sdpvar\*.* .\YALMIP\@sdpvar
 ```
 ### Linux:
 ```
 git clone https://github.com/alen-mujkanovic/convex_diffusion.git
 git clone https://github.com/yalmip/YALMIP
-cp -a ./convex_diffusion-master/operators/@sdpvar/. ./YALMIP-master/@sdpvar
+cp -a ./convex_diffusion/operators/@sdpvar/. ./YALMIP/@sdpvar
 ```
 
 
 ## Example
 
 If you want to run the example, you require MATLAB 2017a and will also have to install:
-- **YALMIP** by Johan Löberg: http://users.isy.liu.se/johanl/yalmip/
-- **CPLEX linear solver** by IBM: http://www-01.ibm.com/software/commerce/optimization/cplex-optimizer/
+- **YALMIP** by Johan Löberg: https://yalmip.github.io/
+- **CPLEX linear solver** by IBM: https://www.ibm.com/products/ilog-cplex-optimization-studio
 
 Both are available as free downloads. Alternatively, the code can be easily modified to use:
 - **CVX** by CVX Research: http://cvxr.com/cvx/
