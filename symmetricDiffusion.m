@@ -66,4 +66,4 @@ sym.n2 = sym.n-sym.nInv-round(p.nRF/2);		sym.t2 = sym.n2 * dt;
 
 % Split waveforms to pre/post inversion parts
 sym.G1 = sym.G(1:sym.n1);
-sym.G2 = sym.G(sym.n1+sym.nRF:end);
+sym.G2 = sym.G(sym.n1+sym.param.nRF:end);

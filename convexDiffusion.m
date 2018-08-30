@@ -134,4 +134,4 @@ cvx.b = bValue(cvx.G, p);
 
 % Split waveforms to pre/post inversion parts
 cvx.G1 = cvx.G(1:cvx.n1);
-cvx.G2 = cvx.G(cvx.n1+cvx.nRF:end);
+cvx.G2 = cvx.G(cvx.n1+cvx.param.nRF:end);
