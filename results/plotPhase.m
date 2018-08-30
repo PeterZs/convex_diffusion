@@ -21,14 +21,14 @@ plot(sym.tVecEC, sym.phiEC, 'LineWidth',4);
 plot(cvx.tVecEC, cvx.phiEC, 'LineWidth',4);
 plot(sym.tInv*1e3,sym.phiEC(sym.nInv),'ko');
 plot(cvx.tInv*1e3,cvx.phiEC(cvx.nInv),'kx');
-plot(sym.tE*1e3,sym.phiEC(sym.nE),'ko');
-plot(cvx.tE*1e3,cvx.phiEC(cvx.nE),'kx');
+plot(sym.tE*1e3,sym.resEC,'ko');
+plot(cvx.tE*1e3,cvx.resEC,'kx');
 hold off;
 
 xlabel('Time [ms]');
 ylabel('Residual phase [rad/m]');
-legend(['\phi_{sym}=' num2str(sym.phiEC(sym.nE),'%1.2e')], ...
-	   ['\phi_{cvx} =' num2str(cvx.phiEC(cvx.nE),'%1.2e')]);
+legend(['\phi_{sym}=' num2str(sym.resEC,'%1.2e')], ...
+	   ['\phi_{cvx} =' num2str(cvx.resEC,'%1.2e')]);
 set(gca, 'FontSize', 16);
 
 %% Plot concomitant field phase evolution

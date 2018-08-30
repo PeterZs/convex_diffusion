@@ -31,6 +31,7 @@ s.resCC = residualPhase(s.B_CC, s.param);
 
 % Gradient moments
 s.moments = gradientMoments(s.G, s.param);
+s.stdM = std(s.M,0,2);
 
 % Info string
 s.info = infoString(s);
