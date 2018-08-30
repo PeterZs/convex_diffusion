@@ -61,3 +61,9 @@ sym.nPost = 0;								sym.tPost = sym.nPost * dt;
 sym.nInv = round(sym.nEnc/2 + sym.nPre);	sym.tInv = sym.nInv * dt;
 sym.param.inv.n = sym.nInv;						
 sym.nE = 2 * sym.nInv;						sym.tE = sym.nE * dt;
+sym.n1 = sym.nInv-round(p.nRF/2);			sym.t1 = sym.n1 * dt;
+sym.n2 = sym.n-sym.nInv-round(p.nRF/2);		sym.t2 = sym.n2 * dt;
+
+% Split waveforms to pre/post inversion parts
+sym.G1 = sym.G(1:sym.n1);
+sym.G2 = sym.G(sym.n1+sym.nRF:end);

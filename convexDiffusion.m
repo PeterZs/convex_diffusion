@@ -122,10 +122,16 @@ cvx.nPost = nPost;			cvx.tPost = cvx.nPost* dt;
 cvx.nInv = nPre + nInv;		cvx.tInv = cvx.nInv * dt;
 cvx.param.inv.n = cvx.nInv;
 cvx.nE = 2 * cvx.nInv;		cvx.tE = cvx.nE * dt;
-cvx.n1 = n1;				cvx.t1 = cvx.n1 * dt;
-cvx.n2 = n2;				cvx.t2 = cvx.n2 * dt;
+cvx.n1 = nPre + n1;			cvx.t1 = cvx.n1 * dt;
+cvx.n2 = n2 + nPost;		cvx.t2 = cvx.n2 * dt;
 
 % Add dead time before/after the encoding to center the readout in tE
 cvx.G = [zeros(nPre,1); cvx.G; zeros(nPost,1)];
 cvx.n = length(cvx.G);
 cvx.b = bValue(cvx.G, p);
+
+% Split waveforms to pre/post inversion parts
+
+% Split waveforms to pre/post inversion parts
+cvx.G1 = cvx.G(1:cvx.n1);
+cvx.G2 = cvx.G(cvx.n1+cvx.nRF:end);
