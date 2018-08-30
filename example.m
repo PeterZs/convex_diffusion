@@ -4,10 +4,12 @@
 % field corrected asymmetric waveforms
 % Settings and targets can be adapted as suited in parameters.m
 
+
 %% Initialize
+close all
 path = fileparts(which(mfilename));
 addpath(genpath(path))
-resultsFile = '';		% Filename for saving results to disk
+SAVE = true;	% Set flag to save results to disk
 
 %% Create waveforms
 % Design symmetric waveform
@@ -29,6 +31,6 @@ plotMoments(sym, cvx);
 plotPhase(sym, cvx);
 
 % Save to disk
-if ~strcmp(resultsFile,"")
-	save (resultsFile, 'sym', 'cvx');
+if SAVE
+	saveResults(sym, cvx, true);
 end
