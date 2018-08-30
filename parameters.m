@@ -9,6 +9,7 @@ if nargin < 1, type = 'cvx'; end
 
 %% Basic simulation and system parameters
 p = struct();			% Parameter structure
+p.type = type;
 p.dt = 100e-6;			% Timestep of optimization [s] (10us < dt < 1ms)
 p.B0 = 3.0;				% Static magnetic field strength [T]
 p.gamma = 42.577e6;		% Gyromagnetic ratio [Hz/T]
@@ -35,7 +36,7 @@ p.sliceDir = p.sliceDir / norm(p.sliceDir);
 %% Imaging parameters
 p.T2star = 80e-3;		% T2* decay rate of tissue [s]
 p.FOV = [.1 .1 .2];		% Field of view [x y z] [m]
-p.ST = 5e-3;			% Slice thickness [m]
+p.ST = 8e-3;			% Slice thickness [m]
 p.R = 2;				% In-plane acceleration factor
 
 % Calculate additional values
@@ -68,7 +69,7 @@ p.inv = inv;
 %% Optimization-specific values
 if strcmp(type,'cvx')
 	
-	p.x = 0.745;			% Waveform asymmetry factor [0 .. 1]
+	p.x = 0.745;		% Waveform asymmetry factor [0 .. 1]
 	
 	% Total variation regularization
 	p.TV = false;		% Slew rate TV regularization flag [Bool]
@@ -76,9 +77,10 @@ if strcmp(type,'cvx')
 	
 	% Concomitant field correction
 	p.coco = true;		% Concomitant field correction flag [Bool]
-	p.mMax = 1.55e-2;		% Maxwell-index limit [s^1/2*T/m]
+	p.mMax = 1.55e-2;	% Maxwell-index limit [s^1/2*T/m]
 	
 	% Optimization limits
 	p.tMax = 0.2;		% Terminate bisection search when tEnc>=tMax [s]
 	p.nMax = round(p.tMax/dt);
 	
+end
