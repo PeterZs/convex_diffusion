@@ -80,7 +80,7 @@ if strcmp(type,'cvx')
 	p.mMax = 1.55e-2;	% Maxwell-index limit [s^1/2*T/m]
 	
 	% Optimization limits
-	p.tMax = 0.2;		% Terminate bisection search when tEnc>=tMax [s]
+	p.tMax = 0.1;		% Terminate bisection search when tEnc>=tMax [s]
 	p.nMax = round(p.tMax/dt);
 	
 end
