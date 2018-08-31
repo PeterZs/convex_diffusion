@@ -2,6 +2,11 @@ function cvx = convexDiffusion(nBot, nTop)
 % Generates diffusion encoding waveforms for a target b-value subject to 
 % hardware constraints and sequence timing parameters with optimized
 % concomitant field and gradient moment evolution
+%
+% Input:	nBot	Lower bound on gradient encoding length
+%			nTop	Upper bound on gradient encoding length
+%
+% Output:	cvx		Output waveform data structure
 
 %% Initialize
 % Create data structures
@@ -31,6 +36,7 @@ while not(done)
 	n2 = floor((1-p.x) * (n-p.nRF));
 	nPre = max(0, n2 - n1 + round(p.nRead/2));
 	nInv = n1 + round(p.nRF/2);
+	p.inv.n = nInv;
 	nE = 2 * nInv;
 	nPost = max(0, nE - n - round(p.nRead/2));
 	
@@ -48,19 +54,18 @@ while not(done)
 	% Calculate concomitant field fields
 	if p.coco
 		m1 = maxwellIndex(G(1:n1), p);
-		m2 = maxwellIndex(G(n-n2:n), p);
+		m2 = maxwellIndex(G((n-n2):n), p);
 	else
 		m1 = 0; m2 = 0;
 	end
 
 	% Define constraints on G(t)
-	p.inv.n = nInv;
 	rfPulse = max(n1,1):min(n1+p.nRF,n);
 	constraints = [ G(1) == 0, G(n) == 0, G(rfPulse) == 0 ...
 					G <= p.Gmax, G >= -p.Gmax ...
 					S <= p.Smax, S >= -p.Smax, ...
 					m1 <= p.mMax, m2 <= p.mMax, ...
-					abs(gradientMoments(G, p)) <= mvec ];
+					abs(gradientMoments(G,p)) <= mvec ];
 
 	% Set objective function and options
 	objective = -abs(sum(cumsum(C*G)));
@@ -78,6 +83,7 @@ while not(done)
 	b = bValue(G_tmp, p);
 	if isnan(b), b = 0; end
 	fprintf(' ... b = %2.2f s/mm^2 \n', b*1e-6);
+	fprintf('	m1 = %2.2f ... m2 = %2.2f \n', value(m1)*1e3, value(m2)*1e3);
 	
 	% Check termination condition
 	if (nTop <= nBot) || (abs(b-p.bTarget) <= 0.01*p.bTarget)
@@ -109,7 +115,7 @@ while not(done)
 	% Hard termination condition
 	if( n > p.nMax )
 		fprintf('n = %d > nMax = %d: terminating bisection \n',n,p.nMax);
-		cvx.G = NaN * ones(size(n));
+		cvx.G = value(G);
 		done = 1;
 	end
 end
@@ -131,7 +137,7 @@ cvx.n = length(cvx.G);
 cvx.b = bValue(cvx.G, p);
 
 % Split waveforms to pre/post inversion parts
-
-% Split waveforms to pre/post inversion parts
 cvx.G1 = cvx.G(1:cvx.n1);
-cvx.G2 = cvx.G(cvx.n1+cvx.param.nRF:end);
+cvx.G2 = cvx.G((cvx.n1+cvx.param.nRF+1):end);
+cvx.m1 = value(m1); cvx.m2 = value(m2);
+cvx.m = maxwellIndex(cvx.G, cvx.param);
