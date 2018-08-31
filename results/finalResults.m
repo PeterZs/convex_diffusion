@@ -8,8 +8,11 @@ dt = s.param.dt;	% Shorthand access
 %% Final time series data
 % Eddy-current and other linear gradient perturbations
 girf = loadGIRF(s.param.tRead, dt);
-s.G_EC = conv(s.G,girf);
-s.G_EC(1:s.n) = s.G_EC(1:s.n) - s.G;
+for i = 1:numel(s.param.encodeDir)
+	dir = s.param.encodeDir(i);
+	s.G_EC(:,i) = conv(dir * s.G, girf(:,i));
+	s.G_EC(1:s.n,i) = s.G_EC(1:s.n,i) - dir * s.G;
+end
 
 % Concomitant fields
 s.B_CC = concomitantFields(s.G, s.param);
@@ -26,12 +29,14 @@ s.M = encodingMoments(s.G, s.param);
 s.AF = maxwellAttenuation(s.G, s.param);
 
 % Residual phases
-s.resEC = residualPhase(s.G_EC(1:s.nE), s.param);
+s.resEC = residualPhase(s.G_EC(1:s.nE,:), s.param);
 s.resCC = residualPhase(s.B_CC, s.param);
 
 % Gradient moments
 s.moments = gradientMoments(s.G, s.param);
-s.stdM = std(s.M,0,2);
+
+% Standard deviation of moment evolution
+s.stdM = std(s.M(:,(s.nPre+1):(s.n-s.nPost)),0,2);	% Only take encoding part
 
 % Info string
 s.info = infoString(s);
