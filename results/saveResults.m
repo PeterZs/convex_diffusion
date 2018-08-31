@@ -26,10 +26,11 @@ save([path 'cvx'], 'cvx')
 
 % Interpolate waveforms to 10us sampling for Siemens scanners
 if interp
-	sym.G1 = interp1(sym.G1, 1:10e-6/sym.param.dt:sym.n1);
-	sym.G2 = interp1(sym.G2, 1:10e-6/sym.param.dt:sym.n2);
-	cvx.G1 = interp1(cvx.G1, 1:10e-6/cvx.param.dt:cvx.n1);
-	cvx.G2 = interp1(cvx.G2, 1:10e-6/cvx.param.dt:cvx.n2);
+	interp_dt = 10e-6/sym.param.dt;
+	sym.G1 = interp1(sym.G1, interp_dt:interp_dt:sym.n1);
+	sym.G2 = interp1(sym.G2, interp_dt:interp_dt:sym.n2);
+	cvx.G1 = interp1(cvx.G1, interp_dt:interp_dt:cvx.n1);
+	cvx.G2 = interp1(cvx.G2, interp_dt:interp_dt:cvx.n2);
 end
 
 % Save waveforms as .txt files
@@ -50,6 +51,6 @@ fclose(fid);
 h = get(groot, 'Children');
 if size(h) == 2
 	saveas(h(1), [path 'gradients.png'])
-	saveas(h(2), [path 'phase.png']);
+	saveas(h(2), [path 'moments.png']);
 	% close(h(1)); close(h(2));
 end
