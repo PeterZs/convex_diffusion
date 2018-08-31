@@ -27,8 +27,8 @@ cvx = finalResults(cvx);
 fprintf(['Optimized    : ' cvx.info '\n']);
 
 % Create plots
+plotGradients(sym, cvx);
 plotMoments(sym, cvx);
-plotPhase(sym, cvx);
 
 % Save to disk
 if SAVE
