@@ -29,7 +29,7 @@ If you want to run the example, you require MATLAB 2017a and will also have to i
 - **YALMIP** by Johan Löberg: https://yalmip.github.io/
 and a convex solver supported by YALMIP, such as
 - **CPLEX** by IBM: https://www.ibm.com/products/ilog-cplex-optimization-studio/
-- **SeDuMu** from Lehigh University: http://sedumi.ie.lehigh.edu/
+- **SeDuMi** from Lehigh University: http://sedumi.ie.lehigh.edu/
 - **SDPT3**: https:/github.com/sqlp/sdpt3/
 
 Alternatively, the code can be easily modified to use:
