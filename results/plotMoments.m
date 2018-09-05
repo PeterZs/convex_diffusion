@@ -83,16 +83,16 @@ plot(cvx.tInv*1e3,cvx.phiCC(cvx.nInv),'kx');
 hold off;
 
 mText = ['$m_{max,sym} = $' num2str(sym.m1*1e3,'%1.2f') '$ \frac{mT}{m} \sqrt{s}$'];
-text(sym.tInv*1e3, sym.phiCC(sym.nInv)-5, mText, ...
+text(sym.tInv*1e3, sym.phiCC(sym.nInv)-8, mText, ...
 	'HorizontalAlignment','center', 'Interpreter', 'latex', 'FontSize', 16)
 mText = ['$m_{max,cvx} = $' num2str(cvx.m1*1e3,'%1.2f') '$ \frac{mT}{m} \sqrt{s}$'];
-text(cvx.tInv*1e3, cvx.phiCC(cvx.nInv)-5, mText, ...
+text(cvx.tInv*1e3, cvx.phiCC(cvx.nInv)-8, mText, ...
 	'HorizontalAlignment','center', 'Interpreter', 'latex', 'FontSize', 16)
 
 yr = max(yticks)-min(yticks); y1 = max(yticks)-0.05*yr; y2 = max(yticks)-0.15*yr;
 mText = ['$AF_{sym}=' num2str(sym.AF,'%1.3g') '$'];
 text(1,y1, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$AF_{cvx}=' num2str(sym.AF,'%1.3g') '$'];
+mText = ['$AF_{cvx}=' num2str(cvx.AF,'%1.3g') '$'];
 text(1,y2, mText, 'Interpreter','latex', 'FontSize',16)
 
 xlabel('Time [ms]');
