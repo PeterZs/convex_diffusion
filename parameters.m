@@ -10,15 +10,15 @@ if nargin < 1, type = 'cvx'; end
 %% Basic simulation and system parameters
 p = struct();			% Parameter structure
 p.type = type;
-p.dt = 100e-6;			% Timestep of optimization [s] (10us < dt < 1ms)
+p.dt = 50e-6;			% Timestep of optimization [s] (10us < dt < 1ms)
 p.B0 = 3.0;				% Static magnetic field strength [T]
 p.gamma = 42.577e6;		% Gyromagnetic ratio [Hz/T]
 
 
 %% Gradient limits and diffusion encoding targets
 p.MMT = 1;				% Desired waveform moments (M0, M1, M2)
-p.Gmax = 150e-3;		% Maximum gradient field strenth [T/m]
-p.Smax = 150;			% Maximum slew rate [T/m/s]
+p.Gmax = 80e-3;			% Maximum gradient field strenth [T/m]
+p.Smax = 100;			% Maximum slew rate [T/m/s]
 p.bTarget = 400e6;		% Target b-value [s/m^2]
 
 
@@ -69,7 +69,9 @@ p.inv = inv;
 %% Optimization-specific values
 if strcmp(type,'cvx')
 	
-	p.x = 0.745;		% Waveform asymmetry factor [0 .. 1]
+	% 
+	p.manualAsym = false;	% Set asymmetry factor manually [Bool]
+	p.x = 0.745;			% Waveform asymmetry factor [0 .. 1]
 	
 	% Total variation regularization
 	p.TV = false;		% Slew rate TV regularization flag [Bool]
@@ -77,10 +79,9 @@ if strcmp(type,'cvx')
 	
 	% Concomitant field correction
 	p.coco = true;		% Concomitant field correction flag [Bool]
-	p.mMax = 1.55e-2;	% Maxwell-index limit [s^1/2*T/m]
+	p.mMax = 1.20e-2;	% Maxwell-index limit [s^1/2*T/m]
 	
 	% Optimization limits
 	p.tMax = 0.1;		% Terminate bisection search when tEnc>=tMax [s]
-	p.nMax = round(p.tMax/dt);
 	
 end
