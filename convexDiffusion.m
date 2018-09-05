@@ -26,14 +26,20 @@ switch p.MMT
 end
 
 % Optimization values
+nMax = round(p.tMax/dt);
 done = 0; bBot = 0; n = nTop;
 
 %% Optimize
 fprintf('Optimizing... \n');
 while not(done)
 	% Set encoding length and inversion time
-	n1 = ceil(p.x * (n-p.nRF));
-	n2 = floor((1-p.x) * (n-p.nRF));
+	if p.manualAsym
+		x = p.x;
+	else
+		x = min(1, (n+p.nRead/2-p.nRF) / (2*n-2*p.nRF));
+	end
+	n1 = ceil(x * (n-p.nRF));
+	n2 = floor((1-x) * (n-p.nRF));
 	nPre = max(0, n2 - n1 + round(p.nRead/2));
 	nInv = n1 + round(p.nRF/2);
 	p.inv.n = nInv;
@@ -83,12 +89,12 @@ while not(done)
 	b = bValue(G_tmp, p);
 	if isnan(b), b = 0; end
 	fprintf(' ... b = %2.2f s/mm^2 \n', b*1e-6);
-	fprintf('	m1 = %2.2f ... m2 = %2.2f \n', value(m1)*1e3, value(m2)*1e3);
-	
+
 	% Check termination condition
 	if (nTop <= nBot) || (abs(b-p.bTarget) <= 0.01*p.bTarget)
 		% Done - return waveform
 		cvx.G = scaleGmax(G_tmp, p);
+		cvx.b = bValue(cvx.G, p);
 		fprintf('	DONE \n');
 		done = 1;
 	else
@@ -113,15 +119,17 @@ while not(done)
 	end
 	
 	% Hard termination condition
-	if( n > p.nMax )
-		fprintf('n = %d > nMax = %d: terminating bisection \n',n,p.nMax);
+	if( n > nMax )
+		fprintf('n = %d > nMax = %d: terminating bisection \n',n,nMax);
 		cvx.G = value(G);
+		cvx.b = b;
 		done = 1;
 	end
 end
 
 %% Set final values
 % Lengths & durations
+cvx.param.x = x;
 cvx.nPre = nPre;			cvx.tPre = cvx.nPre * dt;
 cvx.nEnc = n;				cvx.tEnc = cvx.nEnc * dt;
 cvx.nPost = nPost;			cvx.tPost = cvx.nPost* dt;
@@ -134,7 +142,6 @@ cvx.n2 = n2 + nPost;		cvx.t2 = cvx.n2 * dt;
 % Add dead time before/after the encoding to center the readout in tE
 cvx.G = [zeros(nPre,1); cvx.G; zeros(nPost,1)];
 cvx.n = length(cvx.G);
-cvx.b = bValue(cvx.G, p);
 
 % Split waveforms to pre/post inversion parts
 cvx.G1 = cvx.G(1:cvx.n1);
