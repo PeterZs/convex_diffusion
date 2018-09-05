@@ -18,14 +18,11 @@ dt = p.dt;		% Easy access for frequent use
 tRamp = p.Gmax/p.Smax;			% Gradient ramp time [s]
 tRamp = ceil(tRamp/p.dt)*p.dt;	% Round with to nearest full timestep
 nRamp = ceil(tRamp/p.dt);		% Normalized ramp time
-N = round(4e-3/p.dt);			% Minimal lobe duration in timesteps
+N = round(1e-3/p.dt);			% Minimal lobe duration in timesteps
 b = 0;							% Initialize b
 
 %%  Design symmetric waveform
 while (b <= p.bTarget*0.99)		% Repeat until the b-value is large enough
-
-	% Increment lobe duration
-	N = N + 1;
 
 	% Create G(t) vector from lobe durations
 	switch p.MMT
@@ -42,6 +39,9 @@ while (b <= p.bTarget*0.99)		% Repeat until the b-value is large enough
 	nEnc = length(G);
 	p.inv.n = round(nEnc/2);
 	b = bValue(G, p);
+	
+	% Increment lobe duration
+	N = N + 1;
 
 end
 
