@@ -33,7 +33,7 @@ done = 0; bBot = 0; n = nTop;
 fprintf('Optimizing... \n');
 while not(done)
 	% Set encoding length and inversion time
-	if p.manualAsym
+	if p.autoAsym
 		x = p.x;
 	else
 		x = min(1, (n+p.nRead/2-p.nRF) / (2*n-2*p.nRF));
@@ -146,5 +146,6 @@ cvx.n = length(cvx.G);
 % Split waveforms to pre/post inversion parts
 cvx.G1 = cvx.G(1:cvx.n1);
 cvx.G2 = cvx.G((cvx.n1+cvx.param.nRF+1):end);
-cvx.m1 = value(m1); cvx.m2 = value(m2);
+cvx.m1 = maxwellIndex(cvx.G(1:cvx.n1),cvx.param);
+cvx.m2 = maxwellIndex(cvx.G((cvx.n-cvx.n2):cvx.n),cvx.param);
 cvx.m = maxwellIndex(cvx.G, cvx.param);

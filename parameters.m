@@ -16,9 +16,9 @@ p.gamma = 42.577e6;		% Gyromagnetic ratio [Hz/T]
 
 
 %% Gradient limits and diffusion encoding targets
-p.MMT = 1;				% Desired waveform moments (M0, M1, M2)
-p.Gmax = 80e-3;			% Maximum gradient field strenth [T/m]
-p.Smax = 100;			% Maximum slew rate [T/m/s]
+p.MMT = 0;				% Desired waveform moments (M0, M1, M2)
+p.Gmax = 150e-3; 		% Maximum gradient field strenth [T/m]
+p.Smax = 150;			% Maximum slew rate [T/m/s]
 p.bTarget = 400e6;		% Target b-value [s/m^2]
 
 
@@ -70,16 +70,16 @@ p.inv = inv;
 if strcmp(type,'cvx')
 	
 	% 
-	p.manualAsym = false;	% Set asymmetry factor manually [Bool]
-	p.x = 0.745;			% Waveform asymmetry factor [0 .. 1]
+	p.autoAsym = true;	% Set ideal asymmetry factor automatically [Bool]
+	p.x = 0.745;		% Waveform asymmetry factor if autoAsym is false [0..1]
 	
 	% Total variation regularization
 	p.TV = false;		% Slew rate TV regularization flag [Bool]
 	p.lambda = 1e0;		% Gradient slew rate TV regularization weight
 	
 	% Concomitant field correction
-	p.coco = true;		% Concomitant field correction flag [Bool]
-	p.mMax = 1.20e-2;	% Maxwell-index limit [s^1/2*T/m]
+	p.coco = false;		% Concomitant field correction flag [Bool]
+	p.mMax = 10.0e-3;	% Maxwell-index limit [s^1/2*T/m]
 	
 	% Optimization limits
 	p.tMax = 0.1;		% Terminate bisection search when tEnc>=tMax [s]
