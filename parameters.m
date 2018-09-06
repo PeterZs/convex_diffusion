@@ -17,8 +17,8 @@ p.gamma = 42.577e6;		% Gyromagnetic ratio [Hz/T]
 
 %% Gradient limits and diffusion encoding targets
 p.MMT = 0;				% Desired waveform moments (M0, M1, M2)
-p.Gmax = 150e-3; 		% Maximum gradient field strenth [T/m]
-p.Smax = 150;			% Maximum slew rate [T/m/s]
+p.Gmax = 80e-3; 		% Maximum gradient field strenth [T/m]
+p.Smax = 100;			% Maximum slew rate [T/m/s]
 p.bTarget = 400e6;		% Target b-value [s/m^2]
 
 

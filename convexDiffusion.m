@@ -34,9 +34,9 @@ fprintf('Optimizing... \n');
 while not(done)
 	% Set encoding length and inversion time
 	if p.autoAsym
-		x = p.x;
-	else
 		x = min(1, (n+p.nRead/2-p.nRF) / (2*n-2*p.nRF));
+	else
+		x = p.x;
 	end
 	n1 = ceil(x * (n-p.nRF));
 	n2 = floor((1-x) * (n-p.nRF));
