@@ -19,8 +19,8 @@ title({['       Convex: ' cvx.info], ...
 	   ['Symmetric: ' sym.info]}, 'FontSize', 20);
 
 hold on;
-plot(sym.tVec, sym.G, 'LineWidth',4);
-plot(cvx.tVec, cvx.G, 'LineWidth',4);
+plot(sym.tVec, sym.G*1e3, 'LineWidth',4);
+plot(cvx.tVec, cvx.G*1e3, 'LineWidth',4);
 plot(sym.tInv*1e3,0,'ko');
 plot(cvx.tInv*1e3,0,'kx');
 hold off;
@@ -35,12 +35,12 @@ subplot(2,3,4);
 title('Eddy-current self-term G_{xx}', 'FontSize', 20);
 
 hold on;
-plot(sym.tVecEC, sym.G_EC(:,1), 'LineWidth',4);
-plot(cvx.tVecEC, cvx.G_EC(:,1), 'LineWidth',4);
-plot(sym.tInv*1e3,sym.G_EC(sym.nInv,1),'ko');
-plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,1),'kx');
-plot(sym.tE*1e3,sym.G_EC(cvx.nE,1),'ko');
-plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,1),'kx');
+plot(sym.tVecEC, sym.G_EC(:,1)*1e3, 'LineWidth',4);
+plot(cvx.tVecEC, cvx.G_EC(:,1)*1e3, 'LineWidth',4);
+plot(sym.tInv*1e3,sym.G_EC(sym.nInv,1)*1e3,'ko');
+plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,1)*1e3,'kx');
+plot(sym.tE*1e3,sym.G_EC(cvx.nE,1)*1e3,'ko');
+plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,1)*1e3,'kx');
 hold off;
 
 xlabel('Time [ms]');
@@ -53,12 +53,12 @@ subplot(2,3,5);
 title('Eddy-current self-term G_{yy}', 'FontSize', 20);
 
 hold on;
-plot(sym.tVecEC, sym.G_EC(:,2), 'LineWidth',4);
-plot(cvx.tVecEC, cvx.G_EC(:,2), 'LineWidth',4);
-plot(sym.tInv*1e3,sym.G_EC(sym.nInv,2),'ko');
-plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,2),'kx');
-plot(sym.tE*1e3,sym.G_EC(cvx.nE,2),'ko');
-plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,2),'kx');
+plot(sym.tVecEC, sym.G_EC(:,2)*1e3, 'LineWidth',4);
+plot(cvx.tVecEC, cvx.G_EC(:,2)*1e3, 'LineWidth',4);
+plot(sym.tInv*1e3,sym.G_EC(sym.nInv,2)*1e3,'ko');
+plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,2)*1e3,'kx');
+plot(sym.tE*1e3,sym.G_EC(cvx.nE,2)*1e3,'ko');
+plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,2)*1e3,'kx');
 hold off;
 
 xlabel('Time [ms]');
@@ -71,12 +71,12 @@ subplot(2,3,6);
 title('Eddy-current self-term G_{zz}', 'FontSize', 20);
 
 hold on;
-plot(sym.tVecEC, sym.G_EC(:,3), 'LineWidth',4);
-plot(cvx.tVecEC, cvx.G_EC(:,3), 'LineWidth',4);
-plot(sym.tInv*1e3,sym.G_EC(sym.nInv,3),'ko');
-plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,3),'kx');
-plot(sym.tE*1e3,sym.G_EC(cvx.nE,3),'ko');
-plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,3),'kx');
+plot(sym.tVecEC, sym.G_EC(:,3)*1e3, 'LineWidth',4);
+plot(cvx.tVecEC, cvx.G_EC(:,3)*1e3, 'LineWidth',4);
+plot(sym.tInv*1e3,sym.G_EC(sym.nInv,3)*1e3,'ko');
+plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,3)*1e3,'kx');
+plot(sym.tE*1e3,sym.G_EC(cvx.nE,3)*1e3,'ko');
+plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,3)*1e3,'kx');
 hold off;
 
 xlabel('Time [ms]');
