@@ -47,8 +47,7 @@ while not(done)
 	nPost = max(0, nE - n - round(p.nRead/2));
 	
 	% Display bounds
-	fprintf('	tE <= %2.2fms ', (nPre+nTop+nPost+p.nRead/2)*dt*1e3);
-	fprintf('	... tE > %2.2fms', (nPre+nBot+nPost+p.nRead/2)*dt*1e3);
+	fprintf('	%2.2f ms < tE < %2.2fms ', (nPre+[nBot nTop]+nPost+p.nRead/2)*dt*1e3);
 		
 	% Initialize optimization step
 	G = sdpvar(n,1);
