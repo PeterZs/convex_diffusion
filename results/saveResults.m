@@ -27,11 +27,11 @@ save([path name '_cvx'], 'cvx')
 % Interpolate waveforms to 10us sampling for Siemens scanners
 if interp
 	interp_dt = 10e-6/sym.param.dt;
-	sym.G1 = interp1(sym.G1, interp_dt:interp_dt:sym.n1, 'linear', 'extrap');
-	sym.G2 = interp1(sym.G2, interp_dt:interp_dt:sym.n2, 'linear', 'extrap');
-	cvx.G1 = interp1(cvx.G1, interp_dt:interp_dt:cvx.n1, 'linear', 'extrap');
+	sym.G1 = interp1(sym.G1, interp_dt:interp_dt:sym.n1, 'pchip', 0);
+	sym.G2 = interp1(sym.G2, interp_dt:interp_dt:sym.n2, 'pchip', 0);
+	cvx.G1 = interp1(cvx.G1, interp_dt:interp_dt:cvx.n1, 'pchip', 0);
 	if ~isempty(cvx.G2)
-		cvx.G2 = interp1(cvx.G2, interp_dt:interp_dt:cvx.n2, 'linear', 'extrap');
+		cvx.G2 = interp1(cvx.G2, interp_dt:interp_dt:cvx.n2, 'pchip', 0);
 	end
 end
 
@@ -54,7 +54,7 @@ end
 % Save figures
 h = get(groot, 'Children');
 if size(h,1) == 2
-	saveas(h(1), [path name '_gradients.png'])
-	saveas(h(2), [path name '_moments.png']);
+	saveas(h(1), [path name '_moments.png'])
+	saveas(h(2), [path name '_gradients.png']);
 	% close(h(1)); close(h(2));
 end
