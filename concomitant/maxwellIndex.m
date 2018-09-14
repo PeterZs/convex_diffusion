@@ -9,7 +9,7 @@ function m = maxwellIndex(G, p, convex)
 %			  dt		Time step [s]
 %			  convex	Convexity flag [Bool]
 %
-% Outputs:	m		Maxwell index [s^1/2*T/m] ([s*T^2/m^2] for non-convex)
+% Outputs:	m		Maxwell index [s*T/m] ([s*T^2/m^2] for non-convex)
 
 
 if nargin < 3
