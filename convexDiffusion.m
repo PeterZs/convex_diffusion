@@ -1,9 +1,10 @@
-function cvx = convexDiffusion(nBot, nTop)
+function cvx = convexDiffusion(p, nBot, nTop)
 % Generates diffusion encoding waveforms for a target b-value subject to 
 % hardware constraints and sequence timing parameters with optimized
 % concomitant field and gradient moment evolution
 %
-% Input:	nBot	Lower bound on gradient encoding length
+% Input:	p		Parameter structure
+%			nBot	Lower bound on gradient encoding length
 %			nTop	Upper bound on gradient encoding length
 %
 % Output:	cvx		Output waveform data structure
@@ -11,9 +12,8 @@ function cvx = convexDiffusion(nBot, nTop)
 %% Initialize
 % Create data structures
 cvx = struct();
-cvx.param = parameters('cvx');
-p = cvx.param;	% Shorthand access to parameters
-dt = p.dt;		% Easy access for frequent use
+cvx.param = p;
+dt = p.dt;		% Shorthand access for frequent use
 
 % Define the moment nulling vector
 switch p.MMT
@@ -47,7 +47,7 @@ while not(done)
 	nPost = max(0, nE - n - round(p.nRead/2));
 	
 	% Display bounds
-	fprintf('	%2.2f ms < tE < %2.2fms ', (nPre+[nBot nTop]+nPost+p.nRead/2)*dt*1e3);
+	fprintf('	%2.2f ms < (tE = %2.2fms) <= %2.2fms ', (nPre+[nBot n nTop]+nPost+p.nRead/2)*dt*1e3);
 		
 	% Initialize optimization step
 	G = sdpvar(n,1);
@@ -56,17 +56,17 @@ while not(done)
 	S = D * G / dt;
 	C = tril(ones(n));
 
-	% Calculate concomitant field fields
+	% Calculate concomitant field effect
 	if p.coco
 		m1 = maxwellIndex(G(1:n1), p);
 		m2 = maxwellIndex(G((n-n2):n), p);
 	else
-		m1 = 0; m2 = 0;
+		m1 = 0; m2 = 0; p.mMax = inf;
 	end
 
 	% Define constraints on G(t)
 	rfPulse = max(n1,1):min(n1+p.nRF,n);
-	constraints = [ G(1) == 0, G(n) == 0, G(rfPulse) == 0 ...
+	constraints = [ G(1) == 0, G(2)>=0, G(n) == 0, G(rfPulse) == 0 ...
 					G <= p.Gmax, G >= -p.Gmax ...
 					S <= p.Smax, S >= -p.Smax, ...
 					m1 <= p.mMax, m2 <= p.mMax, ...
@@ -87,7 +87,11 @@ while not(done)
 	% Check b-value of gradient
 	b = bValue(G_tmp, p);
 	if isnan(b), b = 0; end
-	fprintf(' ... b = %2.2f s/mm^2 \n', b*1e-6);
+	fprintf('... b = %2.2f s/mm^2 \n', b*1e-6);
+% 	fprintf('	x = %2.2f ... m1 = %2.2f ... m2 = %2.2f \n', x, value([m1 m2])*1e3);
+% 	fprintf('	%1d < n = %1d < %1d \n\n', nBot, n, nTop);
+% 	Gnow = [zeros(1,nPre) value(G).' zeros(1,nPost)];
+% 	plot((0:(numel(Gnow)-1))*dt*1e3,Gnow);
 
 	% Check termination condition
 	if (nTop <= nBot) || (abs(b-p.bTarget) <= 0.01*p.bTarget)
@@ -135,16 +139,16 @@ cvx.nPost = nPost;			cvx.tPost = cvx.nPost* dt;
 cvx.nInv = nPre + nInv;		cvx.tInv = cvx.nInv * dt;
 cvx.param.inv.n = cvx.nInv;
 cvx.nE = 2 * cvx.nInv;		cvx.tE = cvx.nE * dt;
-cvx.n1 = nPre + n1;			cvx.t1 = cvx.n1 * dt;
-cvx.n2 = n2 + nPost;		cvx.t2 = cvx.n2 * dt;
+cvx.n1 = n1;				cvx.t1 = cvx.n1 * dt;
+cvx.n2 = n2+1;				cvx.t2 = cvx.n2 * dt;
+
+% Split waveforms to pre/post inversion parts
+cvx.G1 = cvx.G(1:cvx.n1);
+cvx.G2 = cvx.G((end-cvx.n2+1):end);
+cvx.m1 = maxwellIndex(cvx.G1,cvx.param);
+cvx.m2 = maxwellIndex(cvx.G2,cvx.param);
+cvx.m = maxwellIndex(cvx.G, cvx.param);
 
 % Add dead time before/after the encoding to center the readout in tE
 cvx.G = [zeros(nPre,1); cvx.G; zeros(nPost,1)];
 cvx.n = length(cvx.G);
-
-% Split waveforms to pre/post inversion parts
-cvx.G1 = cvx.G(1:cvx.n1);
-cvx.G2 = cvx.G((cvx.n1+cvx.param.nRF+1):end);
-cvx.m1 = maxwellIndex(cvx.G(1:cvx.n1),cvx.param);
-cvx.m2 = maxwellIndex(cvx.G((cvx.n-cvx.n2):cvx.n),cvx.param);
-cvx.m = maxwellIndex(cvx.G, cvx.param);
