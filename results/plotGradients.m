@@ -1,85 +1,101 @@
-function plotGradients(sym, cvx)
-% Plots symmetric and optimized gradient waveforms
+function plotGradients(sym, asym, coco)
+% Plots symmetric and optimized gradient waveforms and moment evolution
 %
 % Input:	sym		Symmetric waveform data structure
-%			cvx		Convex optimized waveform data structure
+%			asym	Convex optimized waveform data structure
+%			coco	Concomitant-corrected optimized waveform data structure
 
 figure('unit','normalized', 'outerposition',[0 0 1 1]);
 
 %% Form time vectors
 dt = sym.param.dt;
-sym.tVec = (0:sym.n-1) * dt * 1e3;					% [ms]
-cvx.tVec = (0:cvx.n-1) * dt * 1e3;					% [ms]
-sym.tVecEC = (0:numel(sym.G_EC(:,1))-1) * dt * 1e3;		% [ms]
-cvx.tVecEC = (0:numel(cvx.G_EC(:,1))-1) * dt * 1e3;		% [ms]
+sym.tVec = (0:sym.n-1) * dt * 1e3;						% [ms]
+asym.tVec = (0:asym.n-1) * dt * 1e3;					% [ms]
+coco.tVec = (0:coco.n-1) * dt * 1e3;					% [ms]
 
 %% Plot gradient waveforms
-subplot(2,3,1:3);
-title({['       Convex: ' cvx.info], ...
-	   ['Symmetric: ' sym.info]}, 'FontSize', 20);
+subplot(2,3,1:3, 'Units', 'normalized', 'Position', [0.13 0.575 0.775 0.325]);
+title({['Sym: ' sym.info], ['Asym: ' asym.info], ['Coco: ' coco.info]});
 
 hold on;
 plot(sym.tVec, sym.G*1e3, 'LineWidth',4);
-plot(cvx.tVec, cvx.G*1e3, 'LineWidth',4);
-plot(sym.tInv*1e3,0,'ko');
-plot(cvx.tInv*1e3,0,'kx');
+plot(asym.tVec, asym.G*1e3, 'LineWidth',4);
+plot(coco.tVec, coco.G*1e3, 'LineWidth',4);
+plot(sym.tInv*1e3,0,'kx');
+plot(asym.tInv*1e3,0,'kx');
+plot(coco.tInv*1e3,0,'kx');
 hold off;
 
 xlabel('Time [ms]');
 ylabel('Amplitude [mT/m]');
-legend('G_{sym}','G_{cvx}');
+legend('G_{sym}','G_{asym}','G_{coco}');
 set(gca, 'FontSize', 16);
 
-%% Plot eddy-current G_xx
+%% Plot M0
 subplot(2,3,4);
-title('Eddy-current self-term G_{xx}', 'FontSize', 20);
+title('M_0 Evolution','FontSize', 20);
 
 hold on;
-plot(sym.tVecEC, sym.G_EC(:,1)*1e3, 'LineWidth',4);
-plot(cvx.tVecEC, cvx.G_EC(:,1)*1e3, 'LineWidth',4);
-plot(sym.tInv*1e3,sym.G_EC(sym.nInv,1)*1e3,'ko');
-plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,1)*1e3,'kx');
-plot(sym.tE*1e3,sym.G_EC(cvx.nE,1)*1e3,'ko');
-plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,1)*1e3,'kx');
-hold off;
+plot(sym.tVec, sym.M(1,:), 'LineWidth',4);
+plot(asym.tVec, asym.M(1,:), 'LineWidth',4);
+plot(coco.tVec, coco.M(1,:), 'LineWidth',4);
+hold off
+
+yr = max(yticks)-min(yticks);
+y1 = min(yticks)+0.20*yr; y2 = min(yticks)+0.12*yr; y3 = min(yticks)+0.04*yr;
+mText = ['$\sigma_{sym}=' num2str(sym.stdM(1),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y1, mText, 'Interpreter','latex', 'FontSize',16)
+mText = ['$\sigma_{asym}=' num2str(asym.stdM(1),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y2, mText, 'Interpreter','latex', 'FontSize',16)
+mText = ['$\sigma_{coco}=' num2str(coco.stdM(1),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 
 xlabel('Time [ms]');
-ylabel('Amplitude [mT/m]');
-legend('G_{xx,sym}','G_{xx,cvx}');
+ylabel('Moment [rad/m]');
 set(gca, 'FontSize', 16);
 
-%% Plot eddy-current G_yy
+%% Plot M1
 subplot(2,3,5);
-title('Eddy-current self-term G_{yy}', 'FontSize', 20);
+title('M_1 Evolution','FontSize', 20);
 
 hold on;
-plot(sym.tVecEC, sym.G_EC(:,2)*1e3, 'LineWidth',4);
-plot(cvx.tVecEC, cvx.G_EC(:,2)*1e3, 'LineWidth',4);
-plot(sym.tInv*1e3,sym.G_EC(sym.nInv,2)*1e3,'ko');
-plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,2)*1e3,'kx');
-plot(sym.tE*1e3,sym.G_EC(cvx.nE,2)*1e3,'ko');
-plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,2)*1e3,'kx');
-hold off;
+plot(sym.tVec, sym.M(2,:), 'LineWidth',4);
+plot(asym.tVec, asym.M(2,:), 'LineWidth',4);
+plot(coco.tVec, coco.M(2,:), 'LineWidth',4);
+hold off
+
+yr = max(yticks)-min(yticks);
+y1 = min(yticks)+0.20*yr; y2 = min(yticks)+0.12*yr; y3 = min(yticks)+0.04*yr;
+mText = ['$\sigma_{sym}=' num2str(sym.stdM(2),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y1, mText, 'Interpreter','latex', 'FontSize',16)
+mText = ['$\sigma_{asym}=' num2str(asym.stdM(2),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y2, mText, 'Interpreter','latex', 'FontSize',16)
+mText = ['$\sigma_{coco}=' num2str(coco.stdM(2),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 
 xlabel('Time [ms]');
-ylabel('Amplitude [mT/m]');
-legend('G_{yy,sym}','G_{yy,cvx}');
+ylabel('Moment [rad/m/s]');
 set(gca, 'FontSize', 16);
 
-%% Plot eddy-current G_zz
+%% Plot M2
 subplot(2,3,6);
-title('Eddy-current self-term G_{zz}', 'FontSize', 20);
+title('M_2 Evolution', 'FontSize', 20);
 
 hold on;
-plot(sym.tVecEC, sym.G_EC(:,3)*1e3, 'LineWidth',4);
-plot(cvx.tVecEC, cvx.G_EC(:,3)*1e3, 'LineWidth',4);
-plot(sym.tInv*1e3,sym.G_EC(sym.nInv,3)*1e3,'ko');
-plot(cvx.tInv*1e3,cvx.G_EC(cvx.nInv,3)*1e3,'kx');
-plot(sym.tE*1e3,sym.G_EC(cvx.nE,3)*1e3,'ko');
-plot(cvx.tE*1e3,cvx.G_EC(cvx.nE,3)*1e3,'kx');
-hold off;
+plot(sym.tVec, sym.M(3,:), 'LineWidth',4);
+plot(asym.tVec, asym.M(3,:), 'LineWidth',4);
+plot(coco.tVec, coco.M(3,:), 'LineWidth',4);
+hold off
+
+yr = max(yticks)-min(yticks);
+y1 = min(yticks)+0.20*yr; y2 = min(yticks)+0.12*yr; y3 = min(yticks)+0.04*yr;
+mText = ['$\sigma_{sym}=' num2str(sym.stdM(3),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y1, mText, 'Interpreter','latex', 'FontSize',16)
+mText = ['$\sigma_{asym}=' num2str(asym.stdM(3),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y2, mText, 'Interpreter','latex', 'FontSize',16)
+mText = ['$\sigma_{coco}=' num2str(coco.stdM(3),'%1.3g') ' \frac{rad}{m}$'];
+text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 
 xlabel('Time [ms]');
-ylabel('Amplitude [mT/m]');
-legend('G_{zz,sym}','G_{zz,cvx}');
+ylabel('Moment [rad/m/s^2]');
 set(gca, 'FontSize', 16);
