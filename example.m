@@ -13,24 +13,29 @@ SAVE = true;	% Set flag to save results to disk
 
 %% Create waveforms
 % Design symmetric waveform
-sym = symmetricDiffusion;
+sym = symmetricDiffusion(parameters('sym'));
 
-% Design convex waveform
-nTop = round(sym.nE-sym.param.nRead/2);	% Encoding duration upper bound
-nBot = sym.param.nRF;					% Encoding duration lower bound
-cvx = convexDiffusion(nBot, nTop);
+% Set encoding duration bounds for optimization
+nTop = round(sym.nE-sym.param.nRead/2);
+nBot = sym.param.nRF;
+
+% Design convex waveforms
+asym = convexDiffusion(parameters('asym'), nBot, nTop);
+coco = convexDiffusion(parameters('coco'), nBot, nTop);
 
 %% Calculate and display results
 sym = finalResults(sym);
-fprintf(['Non-optimized: ' sym.info '\n']);
-cvx = finalResults(cvx);
-fprintf(['Optimized    : ' cvx.info '\n']);
+fprintf(['Symmetric:   ' sym.info '\n']);
+asym = finalResults(asym);
+fprintf(['Asymmetric:  ' asym.info '\n']);
+coco = finalResults(coco);
+fprintf(['Concomitant: ' coco.info '\n']);
 
 % Create plots
-plotGradients(sym, cvx);
-plotMoments(sym, cvx);
+plotGradients(sym, asym, coco);
+plotResiduals(sym, asym, coco);
 
 % Save to disk
 if SAVE
-	saveResults(sym, cvx, true);
+	saveResults(sym, asym, coco);
 end
