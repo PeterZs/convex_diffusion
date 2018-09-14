@@ -26,7 +26,7 @@ s.M = encodingMoments(s.G, s.param);
 
 %% Calculate final values
 % Concomitant field attenuation factor
-s.AF = maxwellAttenuation(s.G, s.param);
+[s.AF, s.AF_slice, s.AF_phase] = maxwellAttenuation(s.G, s.param);
 
 % Residual phases
 s.resEC = residualPhase(s.G_EC(1:s.nE,:), s.param);

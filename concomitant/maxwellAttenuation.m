@@ -1,4 +1,4 @@
-function AF = maxwellAttenuation(G, p)
+function [AF, AF_slice, AF_phase] = maxwellAttenuation(G, p)
 % Calculates the attention caused by concomitant field contributions for a 
 % given gradient waveform and orientation at the field of view edge
 % (Szczepankiewicz, ISMRM 2018)
@@ -37,6 +37,6 @@ k_slice = dot(p.sliceDir, k);
 k_phase = dot(p.phaseDir, k);
 
 % Calculate attenuation factors
-sliceAF = abs(sinc(k_slice * p.ST));
-phaseAF = exp(-abs(k_phase * p.ESP/(p.dk*p.T2star)));
-AF = sliceAF * phaseAF;
+AF_slice = abs(sinc(k_slice * p.ST));
+AF_phase = exp(-abs(k_phase * p.ESP/(p.dk*p.T2star)));
+AF = AF_slice * AF_phase;
