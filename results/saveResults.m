@@ -29,11 +29,11 @@ if asym.param.interp
 	sym.G1 = interp1(sym.G1, 1:rateFactor:sym.n1, 'pchip');
 	sym.G2 = interp1(sym.G2, 1:rateFactor:sym.n2, 'pchip');
 	asym.G1 = interp1(asym.G1, 1:rateFactor:asym.n1, 'pchip');
-	if ~isempty(asym.G2)
+	if numel(asym.G2)>1
 		asym.G2 = interp1(asym.G2, 1:rateFactor:asym.n2, 'pchip');
 	end
 	coco.G1 = interp1(coco.G1, 1:rateFactor:coco.n1, 'pchip');
-	if ~isempty(coco.G2)
+	if numel(coco.G2)>1
 		coco.G2 = interp1(coco.G2, 1:rateFactor:coco.n2, 'pchip');
 	end
 end
