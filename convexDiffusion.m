@@ -25,15 +25,18 @@ switch p.MMT
     mvec =  [0, 0, 0];		% M0/M1/M2-nulled gradient
 end
 
-% Optimization values
+% Initialize optimization values
 nMax = round(p.tMax/dt);
-done = 0; bBot = 0; n = nTop;
+n = nTop;
+done = 0;
+bBot = 0;
 
 %% Optimize
 fprintf('Optimizing... \n');
 while not(done)
+	
 	% Set encoding length and inversion time
-	if p.autoAsym
+	if isnan(p.x)
 		x = min(1, (n+p.nRead/2-p.nRF) / (2*n-2*p.nRF));
 	else
 		x = p.x;
@@ -47,7 +50,8 @@ while not(done)
 	nPost = max(0, nE - n - round(p.nRead/2));
 	
 	% Display bounds
-	fprintf('	%2.2f ms < (tE = %2.2fms) <= %2.2fms ', (nPre+[nBot n nTop]+nPost+p.nRead/2)*dt*1e3);
+	fprintf ('	%2.2f ms < (tE = %2.2fms) <= %2.2fms ... ', ...
+			(nPre+[nBot n nTop]+nPost+p.nRead/2)*dt*1e3);
 		
 	% Initialize optimization step
 	G = sdpvar(n,1);
@@ -56,20 +60,11 @@ while not(done)
 	S = D * G / dt;
 	C = tril(ones(n));
 
-	% Calculate concomitant field effect
-	if p.coco
-		m1 = maxwellIndex(G(1:n1), p);
-		m2 = maxwellIndex(G((n-n2):n), p);
-	else
-		m1 = 0; m2 = 0; p.mMax = inf;
-	end
-
 	% Define constraints on G(t)
 	rfPulse = max(n1,1):min(n1+p.nRF,n);
 	constraints = [ G(1) == 0, G(2)>=0, G(n) == 0, G(rfPulse) == 0 ...
 					G <= p.Gmax, G >= -p.Gmax ...
-					S <= p.Smax, S >= -p.Smax, ...
-					m1 <= p.mMax, m2 <= p.mMax, ...
+					S <= p.Smax, S >= -p.Smax ...
 					abs(gradientMoments(G,p)) <= mvec ];
 
 	% Set objective function and options
@@ -82,19 +77,30 @@ while not(done)
 
 	% Run gradient optimization
 	optimize(constraints, objective, options);
-	G_tmp = value(G);
+	
+	% Concomitant field compensation
+	if p.coco
+		% Set Maxwell index bound
+		m1 = maxwellIndex(G(1:n1), p);
+		m2 = maxwellIndex(G((n-n2):n), p);
+		mMax = max(p.mMin,value(m2));
+		
+		% Re-run optimization with additional Maxwell constraint
+		constraints = [constraints, m1 <= mMax];
+		optimize(constraints, objective, options);
+		
+		% Print index values
+		fprintf('m1 = %2.2f ... m2 = %2.2f ... ', value([m1 m2])*1e6);
+	end
 	
 	% Check b-value of gradient
+	G_tmp = value(G);
 	b = bValue(G_tmp, p);
 	if isnan(b), b = 0; end
-	fprintf('... b = %2.2f s/mm^2 \n', b*1e-6);
-% 	fprintf('	x = %2.2f ... m1 = %2.2f ... m2 = %2.2f \n', x, value([m1 m2])*1e3);
-% 	fprintf('	%1d < n = %1d < %1d \n\n', nBot, n, nTop);
-% 	Gnow = [zeros(1,nPre) value(G).' zeros(1,nPost)];
-% 	plot((0:(numel(Gnow)-1))*dt*1e3,Gnow);
+	fprintf('b = %2.2f s/mm^2 \n', b*1e-6);
 
 	% Check termination condition
-	if (nTop <= nBot) || (abs(b-p.bTarget) <= 0.01*p.bTarget)
+	if (nTop <= nBot) || (abs(b-p.bTarget) <= p.bTol)
 		% Done - return waveform
 		cvx.G = scaleGmax(G_tmp, p);
 		cvx.b = bValue(cvx.G, p);
@@ -102,7 +108,7 @@ while not(done)
 		done = 1;
 	else
 		% Test b-value against desired b-value
-		if (b > p.bTarget)
+		if b > p.bTarget
 			nTop = n;
 			c = p.bTarget/(b+bBot);
 			n = floor((1-c)*nBot + c*nTop);
@@ -122,7 +128,7 @@ while not(done)
 	end
 	
 	% Hard termination condition
-	if( n > nMax )
+	if n > nMax 
 		fprintf('n = %d > nMax = %d: terminating bisection \n',n,nMax);
 		cvx.G = value(G);
 		cvx.b = b;
