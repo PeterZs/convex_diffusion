@@ -4,24 +4,20 @@
 % field corrected asymmetric waveforms
 % Settings and targets can be adapted as suited in parameters.m
 
+SAVE = true;	% Set flag to save results to disk
 
 %% Initialize
 close all
 path = fileparts(which(mfilename));
 addpath(genpath(path))
-SAVE = true;	% Set flag to save results to disk
 
 %% Create waveforms
 % Design symmetric waveform
 sym = symmetricDiffusion(parameters('sym'));
 
-% Set encoding duration bounds for optimization
-nTop = round(sym.nE-sym.param.nRead/2);
-nBot = sym.param.nRF;
-
 % Design convex waveforms
-asym = convexDiffusion(parameters('asym'), nBot, nTop);
-coco = convexDiffusion(parameters('coco'), nBot, nTop);
+asym = convexDiffusion(parameters('asym'), 0, sym.n);
+coco = convexDiffusion(parameters('coco'), asym.n, sym.n);
 
 %% Calculate and display results
 sym = finalResults(sym);
