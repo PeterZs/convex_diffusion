@@ -23,7 +23,7 @@ N = round(1e-4/p.dt);			% Minimal lobe duration in timesteps
 b = 0;							% Initialize b
 
 %%  Design symmetric waveform
-while (b <= p.bTarget*0.99)		% Repeat until the b-value is large enough
+while (b <= p.bTarget-p.bTol)	% Repeat until the b-value is large enough
 
 	% Create G(t) vector from lobe durations
 	switch p.MMT
