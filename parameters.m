@@ -17,11 +17,11 @@ p.gamma = 42.577e6;		% Gyromagnetic ratio [Hz/T]
 
 
 %% Gradient limits and diffusion encoding targets
-p.MMT = 2;				% Desired waveform moments (M0, M1, M2)
-p.Gmax = 80e-3;		% Maximum gradient field strenth [T/m]
+p.MMT = 0;				% Desired waveform moments (M0, M1, M2)
+p.Gmax = 40e-3;			% Maximum gradient field strenth [T/m]
 p.Smax = 100;			% Maximum slew rate [T/m/s]
 p.bTarget = 50e6;		% Target b-value [s/m^2]
-p.bTol = 5e-6;			% Absolute b-value tolerance [s/m^2]
+p.bTol = 1e6;			% Absolute b-value tolerance [s/m^2]
 
 
 %% Set orientations
@@ -72,7 +72,7 @@ p.inv = inv;
 
 
 %% Optimization-specific values
-p.tMax = 0.1;		% Terminate bisection search when tEnc>=tMax [s]
+p.tMax = 0.15;		% Terminate bisection search when tEnc>=tMax [s]
 p.x = NaN;			% Manually set symmetry factor [0..1] (auto if NaN)
 
 % Concomitant field correction
