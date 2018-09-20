@@ -29,7 +29,11 @@ end
 nMax = round(p.tMax/dt);
 n = nTop;
 done = 0;
-bBot = 0;
+if p.coco
+	bBot = p.bTarget;
+else
+	bBot = 0;
+end
 
 %% Optimize
 fprintf('Optimizing... \n');
@@ -88,6 +92,13 @@ while not(done)
 		% Re-run optimization with additional Maxwell constraint
 		constraints = [constraints, m1 <= mMax];
 		optimize(constraints, objective, options);
+		
+		% Optimize again if result was not sufficiently contrained
+		if (abs(value(m1-m2)) > p.mMin) && (value(m2) > p.mMin)
+			mMax = max(p.mMin,value(m2));
+			constraints = [constraints, m1 <= mMax];
+			optimize(constraints, objective, options);
+		end
 		
 		% Print index values
 		fprintf('m1 = %2.2f ... m2 = %2.2f ... ', value([m1 m2])*1e6);
