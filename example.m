@@ -4,34 +4,55 @@
 % field corrected asymmetric waveforms
 % Settings and targets can be adapted as suited in parameters.m
 
-SAVE = true;	% Set flag to save results to disk
 
 %% Initialize
 close all
+SAVE = true;	% Set flag to save results to disk
 path = fileparts(which(mfilename));
 addpath(genpath(path))
 
-%% Create waveforms
-% Design symmetric waveform
-sym = symmetricDiffusion(parameters('sym'));
+for M = [0 1 2]
+	for b = [50 400 500 1000]*1e6
+		for G = [40 80 150 300]*1e-3
+			for S = [100 150 200]
+				for EPI = [32 48]*1e-3
 
-% Design convex waveforms
-asym = convexDiffusion(parameters('asym'), 0, sym.n);
-coco = convexDiffusion(parameters('coco'), asym.n, sym.n);
+					%% Create waveforms
+					% Symmetric waveform
+					p = parameters('sym');
+					p.MMT = M; p.bTarget = b; p.bTol = 0.01*b; p.Gmax = G; p.Smax = S; p.tRead = EPI;
+					sym = symmetricDiffusion(p);
 
-%% Calculate and display results
-sym = finalResults(sym);
-fprintf(['Symmetric:   ' sym.info '\n']);
-asym = finalResults(asym);
-fprintf(['Asymmetric:  ' asym.info '\n']);
-coco = finalResults(coco);
-fprintf(['Concomitant: ' coco.info '\n']);
+					% Asymetric waveform
+					p = parameters('asym');
+					p.MMT = M; p.bTarget = b; p.bTol = 0.01*b; p.Gmax = G; p.Smax = S; p.tRead = EPI;
+					asym = convexDiffusion(p, 0, sym.n);
 
-% Create plots
-plotGradients(sym, asym, coco);
-plotResiduals(sym, asym, coco);
+					% Maxwell-compensated waveform
+					p = parameters('coco');
+					p.MMT = M; p.bTarget = b; p.bTol = 0.01*b; p.Gmax = G; p.Smax = S; p.tRead = EPI;
+					coco = convexDiffusion(p, asym.n, sym.n);
 
-% Save to disk
-if SAVE
-	saveResults(sym, asym, coco);
+					%% Calculate and display results
+					sym = finalResults(sym);
+					fprintf(['Symmetric:   ' sym.info '\n']);
+					asym = finalResults(asym);
+					fprintf(['Asymmetric:  ' asym.info '\n']);
+					coco = finalResults(coco);
+					fprintf(['Concomitant: ' coco.info '\n']);
+
+					% Create plots
+					plotGradients(sym, asym, coco);
+					plotResiduals(sym, asym, coco);
+
+					% Save to disk
+					if SAVE
+						saveResults(sym, asym, coco);
+						close all
+					end
+					
+				end
+			end
+		end
+	end
 end
