@@ -6,53 +6,36 @@
 
 
 %% Initialize
-close all
 SAVE = true;	% Set flag to save results to disk
 path = fileparts(which(mfilename));
 addpath(genpath(path))
 
-for M = [0 1 2]
-	for b = [50 400 500 1000]*1e6
-		for G = [40 80 150 300]*1e-3
-			for S = [100 150 200]
-				for EPI = [32 48]*1e-3
+%% Create waveforms
+% Symmetric waveform
+p = parameters('sym');
+sym = symmetricDiffusion(p);
 
-					%% Create waveforms
-					% Symmetric waveform
-					p = parameters('sym');
-					p.MMT = M; p.bTarget = b; p.bTol = 0.01*b; p.Gmax = G; p.Smax = S; p.tRead = EPI;
-					sym = symmetricDiffusion(p);
+% Asymetric waveform
+p = parameters('asym');
+asym = convexDiffusion(p, 0, sym.n, 1);
 
-					% Asymetric waveform
-					p = parameters('asym');
-					p.MMT = M; p.bTarget = b; p.bTol = 0.01*b; p.Gmax = G; p.Smax = S; p.tRead = EPI;
-					asym = convexDiffusion(p, 0, sym.n);
+% Maxwell-compensated waveform
+p = parameters('coco');
+coco = convexDiffusion(p, asym.n, sym.n, 1);
 
-					% Maxwell-compensated waveform
-					p = parameters('coco');
-					p.MMT = M; p.bTarget = b; p.bTol = 0.01*b; p.Gmax = G; p.Smax = S; p.tRead = EPI;
-					coco = convexDiffusion(p, asym.n, sym.n);
+%% Calculate and display results
+sym = finalResults(sym);
+fprintf(['Symmetric:   ' sym.info '\n']);
+asym = finalResults(asym);
+fprintf(['Asymmetric:  ' asym.info '\n']);
+coco = finalResults(coco);
+fprintf(['Concomitant: ' coco.info '\n']);
 
-					%% Calculate and display results
-					sym = finalResults(sym);
-					fprintf(['Symmetric:   ' sym.info '\n']);
-					asym = finalResults(asym);
-					fprintf(['Asymmetric:  ' asym.info '\n']);
-					coco = finalResults(coco);
-					fprintf(['Concomitant: ' coco.info '\n']);
+% Create plots
+h1 = plotGradients(sym, asym, coco);
+h2 = plotResiduals(sym, asym, coco);
 
-					% Create plots
-					plotGradients(sym, asym, coco);
-					plotResiduals(sym, asym, coco);
-
-					% Save to disk
-					if SAVE
-						saveResults(sym, asym, coco);
-						close all
-					end
-					
-				end
-			end
-		end
-	end
+% Save to disk
+if SAVE
+	saveResults(sym, asym, coco, h1, h2);
 end
