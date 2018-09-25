@@ -1,4 +1,4 @@
-function cvx = convexDiffusion(p, nBot, nTop)
+function cvx = convexDiffusion(p, nBot, nTop, verbose)
 % Generates diffusion encoding waveforms for a target b-value subject to 
 % hardware constraints and sequence timing parameters with optimized
 % concomitant field and gradient moment evolution
@@ -6,6 +6,7 @@ function cvx = convexDiffusion(p, nBot, nTop)
 % Input:	p		Parameter structure
 %			nBot	Lower bound on gradient encoding length
 %			nTop	Upper bound on gradient encoding length
+%			verbose	Print optimization info to output [Bool]
 %
 % Output:	cvx		Output waveform data structure
 
@@ -36,7 +37,7 @@ else
 end
 
 %% Optimize
-fprintf('Optimizing... \n');
+if verbose, fprintf('Optimizing... \n'); end
 while not(done)
 	
 	% Set encoding length and inversion time
@@ -45,8 +46,8 @@ while not(done)
 	else
 		x = p.x;
 	end
-	n1 = ceil(x * (n-p.nRF));
-	n2 = floor((1-x) * (n-p.nRF));
+	n1 = round(x * (n-p.nRF));
+	n2 = round((1-x) * (n-p.nRF));
 	nPre = max(0, n2 - n1 + round(p.nRead/2));
 	nInv = n1 + round(p.nRF/2);
 	p.inv.n = nInv;
@@ -54,8 +55,8 @@ while not(done)
 	nPost = max(0, nE - n - round(p.nRead/2));
 	
 	% Display bounds
-	fprintf ('	%2.2f ms < (tE = %2.2fms) <= %2.2fms ... ', ...
-			(nPre+[nBot n nTop]+nPost+p.nRead/2)*dt*1e3);
+	if verbose, fprintf ('	%2.2f ms < (tE = %2.2fms) <= %2.2fms ... ', ...
+						(nPre+[nBot n nTop]+nPost+p.nRead/2)*dt*1e3); end
 		
 	% Initialize optimization step
 	G = sdpvar(n,1);
@@ -101,21 +102,21 @@ while not(done)
 		end
 		
 		% Print index values
-		fprintf('m1 = %2.2f ... m2 = %2.2f ... ', value([m1 m2])*1e6);
+		if verbose, fprintf('m1 = %2.2f ... m2 = %2.2f ... ', value([m1 m2])*1e6); end
 	end
 	
 	% Check b-value of gradient
 	G_tmp = value(G);
 	b = bValue(G_tmp, p);
 	if isnan(b), b = 0; end
-	fprintf('b = %2.2f s/mm^2 \n', b*1e-6);
+	if verbose, fprintf('b = %2.2f s/mm^2 \n', b*1e-6); end
 
 	% Check termination condition
 	if (nTop <= nBot) || (abs(b-p.bTarget) <= p.bTol)
 		% Done - return waveform
 		cvx.G = scaleGmax(G_tmp, p);
 		cvx.b = bValue(cvx.G, p);
-		fprintf('	DONE \n');
+		if verbose, fprintf('	DONE \n'); end
 		done = 1;
 	else
 		% Test b-value against desired b-value
