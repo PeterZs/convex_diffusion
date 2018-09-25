@@ -1,16 +1,17 @@
-function saveResults(sym, asym, coco)
+function saveResults(sym, asym, coco, h1, h2)
 % Stores the waveform optimization results to diks under ./waveforms/
 %
 % Input:	sym		Symmetric waveform data structure
-%			asym		Convex optimized waveform data structure
+%			asym	Convex optimized waveform data structure
 %			coco	Concomitant-corrected optimized waveform data structure
+%			h1, h2	Figure handles
 
 %% Generate filename from parameters
 name = ['M', num2str(asym.param.MMT,'%d'), ...
-		'_b', num2str(round(asym.param.bTarget/1e6),'%d'), ...
-		'_G', num2str(round(asym.param.Gmax*1e3),'%d'), ...
-		'_S', num2str(round(asym.param.Smax),'%d'), ...
-		'_EPI', num2str(round(asym.param.tRead*1e3),'%d')];
+		'_b', num2str(round(asym.param.bTarget/1e6),'%04d'), ...
+		'_G', num2str(round(asym.param.Gmax*1e3),'%03d'), ...
+		'_S', num2str(round(asym.param.Smax),'%03d'), ...
+		'_EPI', num2str(round(asym.param.tRead/2*1e3),'%d')];
 
 path = [fullfile(fileparts(which(mfilename)),'..') '/waveforms/' name '/'];
 if ~exist(path, 'dir')
@@ -19,9 +20,9 @@ end
 
 %% Create files
 % Save results as structs
-save([path name '_sym'], 'sym')
-save([path name '_asym'], 'asym')
-save([path name '_coco'], 'coco')
+save([path name '_sym'], '-struct', 'sym')
+save([path name '_asym'], '-struct', 'asym')
+save([path name '_coco'], '-struct', 'coco')
 
 
 % Interpolate waveforms to 10us sampling for Siemens scanners
@@ -64,9 +65,8 @@ if ~isempty(coco.G2)
 end
 
 % Save figures
-h = get(groot, 'Children');
-if size(h,1) == 2
-	saveas(h(1), [path name '_residuals.png'])
-	saveas(h(2), [path name '_gradients.png']);
-	% close(h(1)); close(h(2));
+if isvalid(h1) && isvalid(h2)
+	export_fig(h1, [path name '_gradients'], '-png', '-eps');
+	export_fig(h2, [path name '_residuals'], '-png', '-eps');
+	close(h1); close(h2);
 end

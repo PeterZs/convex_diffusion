@@ -1,11 +1,13 @@
-function plotResiduals(sym, asym, coco)
+function h = plotResiduals(sym, asym, coco)
 % Plots residual phase from concomitant and eddy-current effects
 %
 % Input:	sym		Symmetric waveform data structure
 %			asym	Convex optimized waveform data structure
 %			coco	Concomitant-corrected optimized waveform data structure
+%
+% Output:	h		Figure handle
 
-figure('unit','normalized', 'outerposition',[0 0 1 1]);
+h = figure('unit','normalized', 'outerposition',[0 0 1 1], 'Color', 'w');
 
 %% Form time vectors
 dt = sym.param.dt;
@@ -17,7 +19,7 @@ asym.tVecEC = (0:numel(asym.G_EC(:,1))-1) * dt * 1e3;	% [ms]
 coco.tVecEC = (0:numel(coco.G_EC(:,1))-1) * dt * 1e3;	% [ms]
 
 %% Plot concomitant field phase evolution
-subplot(2,3,1:3);
+ax = subplot(2,3,1:3);
 title('Concomitant field phase evolution', 'FontSize', 20);
 
 % Plot lines
@@ -58,11 +60,11 @@ text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 xlabel('Time [ms]');
 ylabel('Residual phase [rad]');
 legend('\phi_{sym}','\phi_{asym}','\phi_{coco}');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
 
 
 %% Plot eddy-current G_xx
-subplot(2,3,4);
+ax = subplot(2,3,4);
 title('Eddy-current self-term G_{xx} phase', 'FontSize', 20);
 
 
@@ -91,11 +93,11 @@ text(x,y3, mText, 'Interpreter','latex', 'FontSize',16)
 % Add labels
 xlabel('Time [ms]');
 ylabel('Residual phase [rad/m]');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
 
 
 %% Plot eddy-current G_yy
-subplot(2,3,5);
+ax = subplot(2,3,5);
 title('Eddy-current self-term G_{yy} phase', 'FontSize', 20);
 
 % Plot lines
@@ -123,11 +125,11 @@ text(x,y3, mText, 'Interpreter','latex', 'FontSize',16)
 % Add labels
 xlabel('Time [ms]');
 ylabel('Residual phase [rad/m]');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
 
 
 %% Plot eddy-current G_zz
-subplot(2,3,6);
+ax = subplot(2,3,6);
 title('Eddy-current self-term G_{zz} phase', 'FontSize', 20);
 
 % Plot lines
@@ -155,4 +157,4 @@ text(x,y3, mText, 'Interpreter','latex', 'FontSize',16)
 % Add labels
 xlabel('Time [ms]');
 ylabel('Residual phase [rad/m]');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);

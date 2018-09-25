@@ -1,11 +1,13 @@
-function plotGradients(sym, asym, coco)
+function h = plotGradients(sym, asym, coco)
 % Plots symmetric and optimized gradient waveforms and moment evolution
 %
 % Input:	sym		Symmetric waveform data structure
 %			asym	Convex optimized waveform data structure
 %			coco	Concomitant-corrected optimized waveform data structure
+%
+% Output:	h		Figure handle
 
-figure('unit','normalized', 'outerposition',[0 0 1 1]);
+h = figure('unit','normalized', 'outerposition',[0 0 1 1], 'Color', 'w');
 
 %% Form time vectors
 dt = sym.param.dt;
@@ -14,7 +16,7 @@ asym.tVec = (0:asym.n-1) * dt * 1e3;					% [ms]
 coco.tVec = (0:coco.n-1) * dt * 1e3;					% [ms]
 
 %% Plot gradient waveforms
-subplot(2,3,1:3, 'Units', 'normalized', 'Position', [0.13 0.575 0.775 0.325]);
+ax = subplot(2,3,1:3, 'Units', 'normalized', 'Position', [0.13 0.575 0.775 0.325]);
 title({['Sym: ' sym.info], ['Asym: ' asym.info], ['Coco: ' coco.info]});
 
 % Plot lines
@@ -31,11 +33,11 @@ hold off;
 xlabel('Time [ms]');
 ylabel('Amplitude [mT/m]');
 legend('G_{sym}','G_{asym}','G_{coco}');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
 
 
 %% Plot M0
-subplot(2,3,4);
+ax = subplot(2,3,4);
 title('M_0 Evolution','FontSize', 20);
 
 % Plot lines
@@ -59,11 +61,11 @@ text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 % Add labels
 xlabel('Time [ms]');
 ylabel('Moment [rad/m]');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
 
 
 %% Plot M1
-subplot(2,3,5);
+ax = subplot(2,3,5);
 title('M_1 Evolution','FontSize', 20);
 
 % Plot lines
@@ -87,11 +89,11 @@ text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 % Add labels
 xlabel('Time [ms]');
 ylabel('Moment [rad/m/s]');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
 
 
 %% Plot M2
-subplot(2,3,6);
+ax = subplot(2,3,6);
 title('M_2 Evolution', 'FontSize', 20);
 
 % Plot lines
@@ -115,4 +117,4 @@ text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 % Add labels
 xlabel('Time [ms]');
 ylabel('Moment [rad/m/s^2]');
-set(gca, 'FontSize', 16);
+set(ax, 'FontSize', 16);
