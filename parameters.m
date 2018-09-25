@@ -21,7 +21,7 @@ p.MMT = 0;				% Desired waveform moments (M0, M1, M2)
 p.Gmax = 40e-3;			% Maximum gradient field strenth [T/m]
 p.Smax = 100;			% Maximum slew rate [T/m/s]
 p.bTarget = 50e6;		% Target b-value [s/m^2]
-p.bTol = 1e6;			% Absolute b-value tolerance [s/m^2]
+p.bTol = 2e6;			% Absolute b-value tolerance [s/m^2]
 
 
 %% Set orientations
@@ -47,14 +47,12 @@ p.dk = p.R / dot(p.phaseDir,p.FOV);	% k spacing in phase direction [1/m]
 
 
 %% Sequence durations
-p.t90 = 1.15e-3;		% Diffusion preparation time [s]
 p.tRF = 4.62e-3;		% Inversion pulse duration [s]
 p.tRead = 32e-3;		% EPI readout time [s]
 p.ESP = 0.5e-3;			% EPI echo spacing [s]
 
 % Discretize and round timings
 dt = p.dt;
-p.t90 = round(p.t90/dt)*dt;
 p.tRF = round(p.tRF/dt)*dt;
 p.nRF = round(p.tRF/dt);
 p.tRead = round(p.tRead/dt)*dt;
@@ -72,12 +70,12 @@ p.inv = inv;
 
 
 %% Optimization-specific values
-p.tMax = 0.15;		% Terminate bisection search when tEnc>=tMax [s]
+p.tMax = 0.2;		% Terminate bisection search when tEnc>=tMax [s]
 p.x = NaN;			% Manually set symmetry factor [0..1] (auto if NaN)
 
 % Concomitant field correction
 p.coco = strcmp(type,'coco');	% Concomitant field compensation flag [Bool]
-p.mMin = 10e-6;		% Minimum Maxwell index value [s*T^2/m^2]
+p.mMin = 4e-6;		% Minimum Maxwell index value [s*T^2/m^2]
 
 % Total variation regularization
 p.TV = false;		% Slew rate TV regularization flag [Bool]
