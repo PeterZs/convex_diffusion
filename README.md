@@ -27,6 +27,7 @@ cp -a ./convex_diffusion/operators/@sdpvar/. ./YALMIP/@sdpvar
 
 If you want to run the example, you require MATLAB 2017a and will also have to install:
 - **YALMIP** by Johan Löberg: https://yalmip.github.io/
+
 and a convex solver supported by YALMIP, such as
 - **CPLEX** by IBM: https://www.ibm.com/products/ilog-cplex-optimization-studio/
 - **SeDuMi** from Lehigh University: http://sedumi.ie.lehigh.edu/
