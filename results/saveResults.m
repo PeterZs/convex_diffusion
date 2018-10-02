@@ -1,10 +1,9 @@
-function saveResults(sym, asym, coco, h1, h2)
-% Stores the waveform optimization results to diks under ./waveforms/
+function saveResults(sym, asym, coco)
+% Stores the waveform optimization results to disk under ./waveforms/
 %
 % Input:	sym		Symmetric waveform data structure
 %			asym	Convex optimized waveform data structure
 %			coco	Concomitant-corrected optimized waveform data structure
-%			h1, h2	Figure handles
 
 %% Generate filename from parameters
 name = ['M', num2str(asym.param.MMT,'%d'), ...
@@ -62,11 +61,4 @@ if ~isempty(coco.G2)
 	fid = fopen([path name '_coco_2.txt'], 'w');
 	fprintf(fid, '%f\r\n', coco.G2 / coco.param.Gmax);
 	fclose(fid);
-end
-
-% Save figures
-if isvalid(h1) && isvalid(h2)
-	export_fig(h1, [path name '_gradients'], '-png', '-eps');
-	export_fig(h2, [path name '_residuals'], '-png', '-eps');
-	close(h1); close(h2);
 end

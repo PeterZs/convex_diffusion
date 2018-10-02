@@ -16,11 +16,12 @@ end
 M = [0 1 2];
 b = [50 250 400 500 1000 2000] * 1e6;
 G = [40 80 120 150 200 250 300] * 1e-3;
-S = [50 100 150 200 150 300];
-EPI = [24 32 48] * 1e-3;
-c = combvec(EPI, S, G, b, M);
+S = [50 100 150 200 250 300];
+tRead = [24 32 48] * 1e-3;
+c = combvec(tRead, S, G, b, M);
 
 parfor i = 1:size(c,2)
+	
 	fprintf('Running simulation %d of %d \n', i, size(c,2));
 	
 	% Symmetric waveform
@@ -43,12 +44,9 @@ parfor i = 1:size(c,2)
 	asym = finalResults(asym);
 	coco = finalResults(coco);
 
-	% Create plots
-	h1 = plotGradients(sym, asym, coco);
-	h2 = plotResiduals(sym, asym, coco);
-
 	% Save to disk
-	saveResults(sym, asym, coco, h1, h2);
+	saveResults(sym, asym, coco);
+	
 end
 
 %% Deinitialize
