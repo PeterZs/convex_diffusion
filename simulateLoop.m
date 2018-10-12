@@ -17,8 +17,8 @@ M = [0 1 2];
 b = [50 250 400 500 1000 2000] * 1e6;
 G = [40 80 120 150 200 250 300] * 1e-3;
 S = [50 100 150 200 250 300];
-tRead = [24 32 48] * 1e-3;
-c = combvec(tRead, S, G, b, M);
+tEPI = [12 16 24] * 1e-3;
+c = combvec(tEPI, S, G, b, M);
 
 parfor i = 1:size(c,2)
 	
@@ -26,17 +26,17 @@ parfor i = 1:size(c,2)
 	
 	% Symmetric waveform
 	p = parameters('sym');
-	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tRead = c(1,i);
+	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tEPI = c(1,i);
 	sym = symmetricDiffusion(p);
 
 	% Asymetric waveform
 	p = parameters('asym');
-	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tRead = c(1,i);
+	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tEPI = c(1,i);
 	asym = convexDiffusion(p, 0, sym.n, 0);
 
 	% Maxwell-compensated waveform
 	p = parameters('coco');
-	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tRead = c(1,i);
+	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tEPI = c(1,i);
 	coco = convexDiffusion(p, asym.n, sym.n, 0);
 
 	% Calculate results

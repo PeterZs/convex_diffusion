@@ -25,7 +25,7 @@ p.bTol = 2e6;			% Absolute b-value tolerance [s/m^2]
 
 
 %% Set orientations
-p.encodeDir = [1 1 1];	% Encoding direction vector [x y z]
+p.encodeDir = [1 0 0];	% Encoding direction vector [x y z]
 p.phaseDir = [1 0 0];	% Phase encoding direction [x y z]
 p.sliceDir = [0 0 1];	% Slice encoding direction [x y z]
 
@@ -37,26 +37,29 @@ p.sliceDir = p.sliceDir / norm(p.sliceDir);
 
 
 %% Imaging parameters
-p.T2star = 100e-3;		% T2* decay rate of tissue [s]
-p.FOV = [1 1 1]*1e-1;	% Field of view [x y z] [m]
-p.ST = 5e-3;			% Slice thickness [m]
-p.R = 1;				% In-plane acceleration factor
-
-% Calculate additional values
+p.T2star = 100e-3;					% T2* decay rate of tissue [s]
+p.FOV = [1 1 1]*1e-1;				% Field of view [x y z] [m]
+p.ST = 5e-3;						% Slice thickness [m]
+p.R = 1;							% In-plane acceleration factor
 p.dk = p.R / dot(p.phaseDir,p.FOV);	% k spacing in phase direction [1/m]
 
 
 %% Sequence durations
+p.tMax = 0.2;			% Terminate bisection search when tEnc>=tMax [s]
+p.mix = true;			% Include mixing time in symmetric encoding [Bool]
+p.tPre = 1.3e-3;		% Diffusion preparation time [ms]
 p.tRF = 4.62e-3;		% Inversion pulse duration [s]
-p.tRead = 32e-3;		% EPI readout time [s]
-p.ESP = 0.5e-3;			% EPI echo spacing [s]
+p.tEPI = 16e-3;			% Readout time to center of EPI [s]
+p.ESP = 0.242e-3;		% EPI echo spacing [s]
 
 % Discretize and round timings
 dt = p.dt;
+p.tPre = round(p.tPre/dt)*dt;
+p.nPre = round(p.tPre/dt);
 p.tRF = round(p.tRF/dt)*dt;
 p.nRF = round(p.tRF/dt);
-p.tRead = round(p.tRead/dt)*dt;
-p.nRead = round(p.tRead/dt);
+p.tEPI = round(p.tEPI/dt)*dt;
+p.nEPI = round(p.tEPI/dt);
 
 
 %% Inversion pulse specification
@@ -70,7 +73,6 @@ p.inv = inv;
 
 
 %% Optimization-specific values
-p.tMax = 0.2;		% Terminate bisection search when tEnc>=tMax [s]
 p.x = NaN;			% Manually set symmetry factor [0..1] (auto if NaN)
 
 % Concomitant field correction

@@ -6,12 +6,7 @@ function saveResults(sym, asym, coco)
 %			coco	Concomitant-corrected optimized waveform data structure
 
 %% Generate filename from parameters
-name = ['M', num2str(asym.param.MMT,'%d'), ...
-		'_b', num2str(round(asym.param.bTarget/1e6),'%04d'), ...
-		'_G', num2str(round(asym.param.Gmax*1e3),'%03d'), ...
-		'_S', num2str(round(asym.param.Smax),'%03d'), ...
-		'_EPI', num2str(round(asym.param.tRead/2*1e3),'%d')];
-
+name = generateName(sym.param);
 path = [fullfile(fileparts(which(mfilename)),'..') '/waveforms/' name '/'];
 if ~exist(path, 'dir')
 	mkdir(path)

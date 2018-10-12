@@ -1,13 +1,14 @@
 function s = finalResults(s)
 % Calculates auxiliary results for the optimized waveforms
 %
-% Input:	s	Waveform data structure
+% Input:	s		Waveform data structure
+%			girf	Gradient impulse response function in time domain
 
 dt = s.param.dt;	% Shorthand access
 
 %% Final time series data
 % Eddy-current and other linear gradient perturbations
-girf = loadGIRF(s.param.tRead, dt);
+girf = loadGIRF(2*s.param.tEPI, dt);
 for i = 1:numel(s.param.encodeDir)
 	dir = s.param.encodeDir(i);
 	s.G_EC(:,i) = conv(dir * s.G, girf(:,i));
