@@ -42,21 +42,21 @@ while not(done)
 	
 	% Set encoding length and inversion time
 	if isnan(p.x)
-		x = min(1, (n+p.nRead/2-p.nRF) / (2*n-2*p.nRF));
+		x = min(1, (n+p.nEPI-p.nRF-p.nPre) / (2*n-2*p.nRF));
 	else
 		x = p.x;
 	end
 	n1 = round(x * (n-p.nRF));
 	n2 = round((1-x) * (n-p.nRF));
-	nPre = max(0, n2 - n1 + round(p.nRead/2));
-	nInv = n1 + round(p.nRF/2);
-	p.inv.n = nInv;
+	nPre = max(p.nPre, n2 - n1 + p.nEPI);
+	nInv = nPre + n1 + round(p.nRF/2);
+	p.inv.n = nInv - nPre;
 	nE = 2 * nInv;
-	nPost = max(0, nE - n - round(p.nRead/2));
+	nPost = max(0, nE - p.nEPI - n - nPre - 1);
 	
 	% Display bounds
 	if verbose, fprintf ('	%2.2f ms < (tE = %2.2fms) <= %2.2fms ... ', ...
-						(nPre+[nBot n nTop]+nPost+p.nRead/2)*dt*1e3); end
+						(nPre+[nBot n nTop]+nPost+p.nEPI)*dt*1e3); end
 		
 	% Initialize optimization step
 	G = sdpvar(n,1);
@@ -78,9 +78,10 @@ while not(done)
 		slewTV = trapz(abs(D*[0;S]/dt)) / (n-2);
 		objective = objective + p.lambda * slewTV;
 	end
-	options = sdpsettings('verbose',0,'solver','cplex','cachesolvers',1);
+	options = sdpsettings('verbose',0,'solver','cplex','cachesolvers',1,'usex0',1);
 
 	% Run gradient optimization
+	assign(G, zeros(n,1));
 	optimize(constraints, objective, options);
 	
 	% Concomitant field compensation
@@ -92,12 +93,14 @@ while not(done)
 		
 		% Re-run optimization with additional Maxwell constraint
 		constraints = [constraints, m1 <= mMax];
+		assign(G, value(G));
 		optimize(constraints, objective, options);
 		
 		% Optimize again if result was not sufficiently contrained
 		if (abs(value(m1-m2)) > p.mMin) && (value(m2) > p.mMin)
 			mMax = max(p.mMin,value(m2));
 			constraints = [constraints, m1 <= mMax];
+			assign(G, value(G));
 			optimize(constraints, objective, options);
 		end
 		
@@ -154,7 +157,7 @@ cvx.param.x = x;
 cvx.nPre = nPre;			cvx.tPre = cvx.nPre * dt;
 cvx.nEnc = n;				cvx.tEnc = cvx.nEnc * dt;
 cvx.nPost = nPost;			cvx.tPost = cvx.nPost* dt;
-cvx.nInv = nPre + nInv;		cvx.tInv = cvx.nInv * dt;
+cvx.nInv = nInv;			cvx.tInv = cvx.nInv * dt;
 cvx.param.inv.n = cvx.nInv;
 cvx.nE = 2 * cvx.nInv;		cvx.tE = cvx.nE * dt;
 cvx.n1 = n1;				cvx.t1 = cvx.n1 * dt;
