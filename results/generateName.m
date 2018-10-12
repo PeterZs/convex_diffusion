@@ -1,0 +1,13 @@
+function name = generateName(param)
+% Generates a descriptive filename from input parameters
+%
+% Input:	param	Optimization parameter struct
+%
+% Output:	name	Descriptive filename
+
+
+name = ['M', num2str(param.MMT,'%d'), ...
+		'_b', num2str(round(param.bTarget/1e6),'%04d'), ...
+		'_G', num2str(round(param.Gmax*1e3),'%03d'), ...
+		'_S', num2str(round(param.Smax),'%03d'), ...
+		'_EPI', num2str(round(param.tEPI*1e3),'%d')];
