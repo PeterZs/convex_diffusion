@@ -35,7 +35,7 @@ while (b <= p.bTarget-p.bTol)	% Repeat until the b-value is large enough
 			G = trapTransform([N,-N,N,-N],p.Gmax,nRamp,1,nGap,2);
 		case 2 % Modified bipolar pair
 			N2  = 2*N + nRamp;
-			nGap = p.nRF + max(0,p.mix*(p.nEPI-p.nPrep));
+			nGap = p.nRF + max(0,p.mix*(p.nEPI-p.nPre));
 			G = trapTransform([N,-N2,-N2,N],p.Gmax,nRamp,1,nGap,2);
 	end
 

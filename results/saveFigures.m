@@ -14,7 +14,9 @@ end
 
 %% Save figures
 if isvalid(h1) && isvalid(h2)
-	export_fig(h1, [path name '_gradients'], '-png');	% '-eps'
-	export_fig(h2, [path name '_residuals'], '-png');
+% 	export_fig(h1, [path name '_gradients'], '-png');	% '-eps'
+% 	export_fig(h2, [path name '_residuals'], '-png');
+	saveas(h1,[path name '_gradients.png']);
+	saveas(h2,[path name '_residuals.png']);
 	close(h1); close(h2);
 end
