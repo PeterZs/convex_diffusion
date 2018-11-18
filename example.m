@@ -7,22 +7,27 @@
 
 
 %% Initialize
-SAVE = true;	% Set flag to save results to disk
+SAVE = false;	% Set flag to save results to disk
 path = fileparts(which(mfilename));
 addpath(genpath(path))
 
 %% Create waveforms
+tic
+
 % Symmetric waveform
 p = parameters('sym');
-sym = symmetricDiffusion(p);	
+sym = symmetricDiffusion(p);
+sym.elapsed = toc;
 
 % Asymetric waveform
 p = parameters('asym');
 asym = convexDiffusion(p, 0, sym.n, 1);
+asym.elapsed = toc;
 
 % Maxwell-compensated waveform
 p = parameters('coco');
 coco = convexDiffusion(p, asym.nEnc, sym.n, 1);
+coco.elapsed = toc;
 
 %% Calculate and display results
 sym = finalResults(sym);
