@@ -6,20 +6,10 @@ function s = finalResults(s)
 
 dt = s.param.dt;	% Shorthand access
 
-%% Final time series data
-% Eddy-current and other linear gradient perturbations
-girf = loadGIRF(2*s.param.tEPI, dt);
-for i = 1:numel(s.param.encodeDir)
-	dir = s.param.encodeDir(i);
-	s.G_EC(:,i) = conv(dir * s.G, girf(:,i));
-	s.G_EC(1:s.n,i) = s.G_EC(1:s.n,i) - dir * s.G;
-end
-
 % Concomitant fields
 s.B_CC = concomitantFields(s.G, s.param);
 
 % Residual phases over time
-s.phiEC = encodingPhase(s.G_EC, s.param);
 s.phiCC = encodingPhase(s.B_CC, s.param);
 
 % Gradient moments over time
@@ -30,7 +20,6 @@ s.M = encodingMoments(s.G, s.param);
 [s.AF, s.AF_slice, s.AF_phase] = maxwellAttenuation(s.G, s.param);
 
 % Residual phases
-s.resEC = residualPhase(s.G_EC(1:s.nE,:), s.param);
 s.resCC = residualPhase(s.B_CC, s.param);
 
 % Gradient moments
