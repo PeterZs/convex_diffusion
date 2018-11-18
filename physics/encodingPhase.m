@@ -14,4 +14,4 @@ function phi = encodingPhase(B, p)
 B = invertFields(B, p.inv);
 
 % Residual phase time evolution
-phi = 2*pi*p.gamma * cumtrapz(B) * p.dt;
+phi = p.gamma * cumtrapz(B) * p.dt;

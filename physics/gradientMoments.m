@@ -19,7 +19,7 @@ tVec = (0:n-1)'*p.dt;	% [s]
 G = invertFields(G, p.inv);
 
 % Calculate final moments
-M0 = 2*pi*p.gamma * trapz(tVec.^0 .* G) * p.dt;
-M1 = 2*pi*p.gamma * trapz(tVec.^1 .* G) * p.dt;
-M2 = pi*p.gamma * trapz(tVec.^2 .* G) * p.dt;
+M0 = p.gamma * trapz(tVec.^0 .* G) * p.dt;
+M1 = p.gamma * trapz(tVec.^1 .* G) * p.dt;
+M2 = 0.5*p.gamma * trapz(tVec.^2 .* G) * p.dt;
 M = [M0 M1 M2];

@@ -14,4 +14,4 @@ function phi = residualPhase(B, p)
 B = invertFields(B, p.inv);
 
 % Residual phase
-phi = 2*pi*p.gamma * trapz(B) * p.dt;
+phi = p.gamma * trapz(B) * p.dt;
