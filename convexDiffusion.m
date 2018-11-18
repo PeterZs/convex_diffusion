@@ -74,10 +74,6 @@ while not(done)
 
 	% Set objective function and options
 	objective = -abs(sum(cumsum(C*G)));
-	if p.TV
-		slewTV = trapz(abs(D*[0;S]/dt)) / (n-2);
-		objective = objective + p.lambda * slewTV;
-	end
 	options = sdpsettings('verbose',0,'solver','cplex','cachesolvers',1,'usex0',1);
 
 	% Run gradient optimization
@@ -125,7 +121,7 @@ while not(done)
 		% Test b-value against desired b-value
 		if b > p.bTarget
 			nTop = n;
-			c = p.bTarget/(b+bBot);
+			c = max(p.bTarget/(b+bBot), 1/2);
 			n = floor((1-c)*nBot + c*nTop);
 			bTop = b;
 		elseif  n == nTop
@@ -136,7 +132,7 @@ while not(done)
 			bBot = b;
 		else
 			nBot = n + 1;
-			c = p.bTarget/(b+bTop);
+			c = min(p.bTarget/(b+bTop), 1/2);
 			n = floor((1-c)*nBot + c*nTop);
 			bBot = b;
 		end
