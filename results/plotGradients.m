@@ -8,6 +8,7 @@ function h = plotGradients(sym, asym, coco)
 % Output:	h		Figure handle
 
 h = figure('unit','normalized', 'outerposition',[0 0 1 1], 'Color', 'w');
+warning('off', 'MATLAB:subplot:InvalidPositionSyntax');
 
 %% Form time vectors
 dt = sym.param.dt;
