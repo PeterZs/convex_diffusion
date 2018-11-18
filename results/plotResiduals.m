@@ -1,5 +1,5 @@
 function h = plotResiduals(sym, asym, coco)
-% Plots residual phase from concomitant and eddy-current effects
+% Plots residual phase from concomitant field effects
 %
 % Input:	sym		Symmetric waveform data structure
 %			asym	Convex optimized waveform data structure
@@ -7,19 +7,16 @@ function h = plotResiduals(sym, asym, coco)
 %
 % Output:	h		Figure handle
 
-h = figure('unit','normalized', 'outerposition',[0 0 1 1], 'Color', 'w');
+h = figure('unit','normalized', 'outerposition',[0 0 1 0.5], 'Color', 'w');
 
 %% Form time vectors
 dt = sym.param.dt;
 sym.tVec = (0:sym.n-1) * dt * 1e3;		% [ms]
 asym.tVec = (0:asym.n-1) * dt * 1e3;	% [ms]
 coco.tVec = (0:coco.n-1) * dt * 1e3;	% [ms]
-sym.tVecEC = (0:numel(sym.G_EC(:,1))-1) * dt * 1e3;		% [ms]
-asym.tVecEC = (0:numel(asym.G_EC(:,1))-1) * dt * 1e3;	% [ms]
-coco.tVecEC = (0:numel(coco.G_EC(:,1))-1) * dt * 1e3;	% [ms]
 
 %% Plot concomitant field phase evolution
-ax = subplot(2,3,1:3);
+ax = subplot(1,1,1);
 title('Concomitant field phase evolution', 'FontSize', 20);
 
 % Plot lines
@@ -60,101 +57,4 @@ text(1,y3, mText, 'Interpreter','latex', 'FontSize',16)
 xlabel('Time [ms]');
 ylabel('Residual phase [rad]');
 legend('\phi_{sym}','\phi_{asym}','\phi_{coco}');
-set(ax, 'FontSize', 16);
-
-
-%% Plot eddy-current G_xx
-ax = subplot(2,3,4);
-title('Eddy-current self-term G_{xx} phase', 'FontSize', 20);
-
-
-% Plot lines
-hold on;
-plot(sym.tVecEC, sym.phiEC(:,1), 'LineWidth',4);
-plot(asym.tVecEC, asym.phiEC(:,1), 'LineWidth',4);
-plot(coco.tVecEC, coco.phiEC(:,1), 'LineWidth',4);
-plot(sym.tE*1e3,sym.phiEC(sym.nE,1),'kx');
-plot(asym.tE*1e3,asym.phiEC(asym.nE,1),'kx');
-plot(coco.tE*1e3,coco.phiEC(coco.nE,1),'kx');
-hold off;
-
-% Add annotations
-xr = max(xticks)-min(xticks); yr = max(yticks)-min(yticks);
-x = max(xticks)-0.35*xr;
-y1 = min(yticks)+0.20*yr; y2 = min(yticks)+0.12*yr; y3 = min(yticks)+0.04*yr;
-
-mText = ['$\phi _{sym}=' num2str(sym.resEC(1),'%1.3g') '\frac{rad}{m}$'];
-text(x,y1, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$\phi _{asym}=' num2str(asym.resEC(1),'%1.3g') '\frac{rad}{m}$'];
-text(x,y2, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$\phi _{coco}=' num2str(coco.resEC(1),'%1.3g') '\frac{rad}{m}$'];
-text(x,y3, mText, 'Interpreter','latex', 'FontSize',16)
-
-% Add labels
-xlabel('Time [ms]');
-ylabel('Residual phase [rad/m]');
-set(ax, 'FontSize', 16);
-
-
-%% Plot eddy-current G_yy
-ax = subplot(2,3,5);
-title('Eddy-current self-term G_{yy} phase', 'FontSize', 20);
-
-% Plot lines
-hold on;
-plot(sym.tVecEC, sym.phiEC(:,2), 'LineWidth',4);
-plot(asym.tVecEC, asym.phiEC(:,2), 'LineWidth',4);
-plot(coco.tVecEC, coco.phiEC(:,2), 'LineWidth',4);
-plot(sym.tE*1e3,sym.phiEC(sym.nE,2),'kx');
-plot(asym.tE*1e3,asym.phiEC(asym.nE,2),'kx');
-plot(coco.tE*1e3,coco.phiEC(coco.nE,2),'kx');
-hold off;
-
-% Add annotations
-xr = max(xticks)-min(xticks); yr = max(yticks)-min(yticks);
-x = max(xticks)-0.35*xr;
-y1 = min(yticks)+0.20*yr; y2 = min(yticks)+0.12*yr; y3 = min(yticks)+0.04*yr;
-
-mText = ['$\phi _{sym}=' num2str(sym.resEC(2),'%1.3g') '\frac{rad}{m}$'];
-text(x,y1, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$\phi _{asym}=' num2str(asym.resEC(2),'%1.3g') '\frac{rad}{m}$'];
-text(x,y2, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$\phi _{coco}=' num2str(coco.resEC(2),'%1.3g') '\frac{rad}{m}$'];
-text(x,y3, mText, 'Interpreter','latex', 'FontSize',16)
-
-% Add labels
-xlabel('Time [ms]');
-ylabel('Residual phase [rad/m]');
-set(ax, 'FontSize', 16);
-
-
-%% Plot eddy-current G_zz
-ax = subplot(2,3,6);
-title('Eddy-current self-term G_{zz} phase', 'FontSize', 20);
-
-% Plot lines
-hold on;
-plot(sym.tVecEC, sym.phiEC(:,3), 'LineWidth',4);
-plot(asym.tVecEC, asym.phiEC(:,3), 'LineWidth',4);
-plot(coco.tVecEC, coco.phiEC(:,3), 'LineWidth',4);
-plot(sym.tE*1e3,sym.phiEC(sym.nE,3),'kx');
-plot(asym.tE*1e3,asym.phiEC(asym.nE,3),'kx');
-plot(coco.tE*1e3,coco.phiEC(coco.nE,3),'kx');
-hold off;
-
-% Add annotations
-xr = max(xticks)-min(xticks); yr = max(yticks)-min(yticks);
-x = max(xticks)-0.35*xr;
-y1 = min(yticks)+0.20*yr; y2 = min(yticks)+0.12*yr; y3 = min(yticks)+0.04*yr;
-
-mText = ['$\phi _{sym}=' num2str(sym.resEC(3),'%1.3g') '\frac{rad}{m}$'];
-text(x,y1, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$\phi _{asym}=' num2str(asym.resEC(3),'%1.3g') '\frac{rad}{m}$'];
-text(x,y2, mText, 'Interpreter','latex', 'FontSize',16)
-mText = ['$\phi _{coco}=' num2str(coco.resEC(3),'%1.3g') '\frac{rad}{m}$'];
-text(x,y3, mText, 'Interpreter','latex', 'FontSize',16)
-
-% Add labels
-xlabel('Time [ms]');
-ylabel('Residual phase [rad/m]');
 set(ax, 'FontSize', 16);
