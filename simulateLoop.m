@@ -15,8 +15,8 @@ end
 %% Simulate waveforms for all parameter combinations
 M = [0 1 2];
 b = [100:100:1000] * 1e6;
-G = [80 150 300] * 1e-3;
-S = 62.5;
+G = [40 80 150 300] * 1e-3;
+S = [62.5 100 200];
 tEPI = [12 16 20 24 28 32] * 1e-3;
 c = combvec(tEPI, S, G, b, M);
 

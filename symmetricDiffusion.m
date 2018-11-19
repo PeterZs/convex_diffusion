@@ -19,7 +19,7 @@ dt = p.dt;		% Shorthand access for frequent use
 tRamp = p.Gmax/p.Smax;			% Gradient ramp time [s]
 tRamp = ceil(tRamp/p.dt)*p.dt;	% Round with to nearest full timestep
 nRamp = ceil(tRamp/p.dt);		% Normalized ramp time
-N = round(1e-4/p.dt);			% Minimal lobe duration in timesteps
+N = ceil(5e-5/p.dt);			% Minimal lobe duration in timesteps
 b = 0;							% Initialize b
 
 %%  Design symmetric waveform
