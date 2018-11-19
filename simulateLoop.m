@@ -8,6 +8,9 @@
 %% Initialize
 path = fileparts(which(mfilename));
 addpath(genpath(path))
+if isempty(gcp)
+	parpool('local', 6);
+end
 
 %% Simulate waveforms for all parameter combinations
 M = [0 1 2];
@@ -17,7 +20,7 @@ S = [62.5 100 200];
 tEPI = [12 16 20 24 28 32] * 1e-3;
 c = combvec(tEPI, S, G, b, M);
 
-for i = 1:size(c,2)
+parfor i = 1:size(c,2)
 	
 	fprintf('Running simulation %d of %d \n', i, size(c,2));
 	tic
@@ -25,18 +28,21 @@ for i = 1:size(c,2)
 	% Symmetric waveform
 	p = parameters('sym');
 	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tEPI = c(1,i);
+    p.nEPI = round(p.tEPI/p.dt);
 	sym = symmetricDiffusion(p);
 	sym.elapsed = toc;
 
 	% Asymetric waveform
 	p = parameters('asym');
 	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tEPI = c(1,i);
+    p.nEPI = round(p.tEPI/p.dt);
 	asym = convexDiffusion(p, 0, sym.n, 0);
 	asym.elapsed = toc;
 
 	% Maxwell-compensated waveform
 	p = parameters('coco');
 	p.MMT = c(5,i); p.bTarget = c(4,i); p.Gmax = c(3,i); p.Smax = c(2,i); p.tEPI = c(1,i);
+    p.nEPI = round(p.tEPI/p.dt);
 	coco = convexDiffusion(p, asym.n, sym.n, 0);
 	coco.elapsed = toc;
 
@@ -54,3 +60,6 @@ for i = 1:size(c,2)
     saveFigures(p, h1, h2);
 	
 end
+
+%% Deinitialize
+delete(gcp('nocreate'));

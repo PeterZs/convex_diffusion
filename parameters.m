@@ -10,14 +10,14 @@ if nargin < 1, type = 'sym'; end
 %% Basic simulation and system parameters
 p = struct();			% Parameter structure
 p.type = type;			% Set waveform type
-p.interp = true;		% Flag to perform interpolation to 10us for Siemens
+p.interp = false;		% Flag to perform interpolation to 10us for Siemens
 p.dt =  100e-6;			% Timestep of optimization [s] (1us < dt < 1ms)
 p.B0 = 3.0;				% Static magnetic field strength [T]
 p.gamma = 42.577e6;		% Gyromagnetic ratio [Hz/T]
 
 
 %% Gradient limits and diffusion encoding targets
-p.MMT = 0;				% Desired waveform moments (M0, M1, M2)
+p.MMT = 2;				% Desired waveform moments (M0, M1, M2)
 p.Gmax = 80e-3;			% Maximum gradient field strenth [T/m]
 p.Smax = 100;			% Maximum slew rate [T/m/s]
 p.bTarget = 500e6;		% Target b-value [s/m^2]
@@ -46,7 +46,7 @@ p.dk = p.R / dot(p.phaseDir,p.FOV);	% k spacing in phase direction [1/m]
 
 %% Sequence durations
 p.tMax = 0.2;			% Terminate bisection search when tEnc>=tMax [s]
-p.mix = false;			% Include mixing time in symmetric encoding [Bool]
+p.mix = true;			% Include mixing time in symmetric encoding [Bool]
 p.tPre = 2.3e-3;		% Diffusion preparation time [ms]
 p.tRF = 4.62e-3;		% Inversion pulse duration [s]
 p.tEPI = 16e-3;			% Readout time to center of EPI [s]
