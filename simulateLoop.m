@@ -8,9 +8,6 @@
 %% Initialize
 path = fileparts(which(mfilename));
 addpath(genpath(path))
-if isempty(gcp)
-	parpool('local', 6);
-end
 
 %% Simulate waveforms for all parameter combinations
 M = [0 1 2];
@@ -20,7 +17,7 @@ S = [62.5 100 200];
 tEPI = [12 16 20 24 28 32] * 1e-3;
 c = combvec(tEPI, S, G, b, M);
 
-parfor i = 1:size(c,2)
+for i = 1:size(c,2)
 	
 	fprintf('Running simulation %d of %d \n', i, size(c,2));
 	tic
@@ -47,11 +44,13 @@ parfor i = 1:size(c,2)
 	sym = finalResults(sym);
 	asym = finalResults(asym);
 	coco = finalResults(coco);
+    
+    % Create plots
+    h1 = plotGradients(sym, asym, coco);
+    h2 = plotResiduals(sym, asym, coco);
 
 	% Save to disk
 	saveResults(sym, asym, coco);
+    saveFigures(p, h1, h2);
 	
 end
-
-%% Deinitialize
-delete(gcp('nocreate'));
