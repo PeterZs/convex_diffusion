@@ -2,7 +2,7 @@ function p = parameters(type)
 % Create parameter structure for diffusion encoding optimization and design
 % and set default values for all parameters
 %
-% Input:	type	Type ['sym, 'asym', 'coco']
+% Input:	type	Type ['sym, 'code', 'coco']
 % Output:	p		Parameter structure
 
 if nargin < 1, type = 'sym'; end
@@ -45,8 +45,8 @@ p.dk = p.R / dot(p.phaseDir,p.FOV);	% k spacing in phase direction [1/m]
 
 
 %% Sequence durations
-p.tMax = 0.2;			% Terminate bisection search when tEnc>=tMax [s]
 p.mix = not(p.MMT);		% Include mixing time in symmetric encoding [Bool]
+p.tMax = 0.2;			% Terminate bisection search when tEnc>=tMax [s]
 p.tPre = 2.3e-3;		% Diffusion preparation time [ms]
 p.tRF = 4.62e-3;		% Inversion pulse duration [s]
 p.tEPI = 16e-3;			% Readout time to center of EPI [s]

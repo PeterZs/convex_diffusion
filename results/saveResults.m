@@ -1,8 +1,8 @@
-function saveResults(sym, asym, coco)
+function saveResults(sym, code, coco)
 % Stores the waveform optimization results to disk under ./waveforms/
 %
 % Input:	sym		Symmetric waveform data structure
-%			asym	Convex optimized waveform data structure
+%			code	Convex optimized waveform data structure
 %			coco	Concomitant-corrected optimized waveform data structure
 
 %% Generate filename from parameters
@@ -15,18 +15,18 @@ end
 %% Create files
 % Save results as structs
 save([path name '_sym'], '-struct', 'sym')
-save([path name '_asym'], '-struct', 'asym')
+save([path name '_code'], '-struct', 'code')
 save([path name '_coco'], '-struct', 'coco')
 
 
 % Interpolate waveforms to 10us sampling for Siemens scanners
-if asym.param.interp
+if code.param.interp
 	rateFactor = 10e-6/sym.param.dt;
 	sym.G1 = interp1(sym.G1, 1:rateFactor:sym.n1, 'pchip');
 	sym.G2 = interp1(sym.G2, 1:rateFactor:sym.n2, 'pchip');
-	asym.G1 = interp1(asym.G1, 1:rateFactor:asym.n1, 'pchip');
-	if numel(asym.G2)>1
-		asym.G2 = interp1(asym.G2, 1:rateFactor:asym.n2, 'pchip');
+	code.G1 = interp1(code.G1, 1:rateFactor:code.n1, 'pchip');
+	if numel(code.G2)>1
+		code.G2 = interp1(code.G2, 1:rateFactor:code.n2, 'pchip');
 	end
 	coco.G1 = interp1(coco.G1, 1:rateFactor:coco.n1, 'pchip');
 	if numel(coco.G2)>1
@@ -41,12 +41,12 @@ fclose(fid);
 fid = fopen([path name '_sym_2.txt'], 'w');
 fprintf(fid, '%f\r\n', sym.G2 / sym.param.Gmax);
 fclose(fid);
-fid = fopen([path name '_asym_1.txt'], 'w');
-fprintf(fid, '%f\r\n', asym.G1 / asym.param.Gmax);
+fid = fopen([path name '_code_1.txt'], 'w');
+fprintf(fid, '%f\r\n', code.G1 / code.param.Gmax);
 fclose(fid);
-if ~isempty(asym.G2)
-	fid = fopen([path name '_asym_2.txt'], 'w');
-	fprintf(fid, '%f\r\n', asym.G2 / asym.param.Gmax);
+if ~isempty(code.G2)
+	fid = fopen([path name '_code_2.txt'], 'w');
+	fprintf(fid, '%f\r\n', code.G2 / code.param.Gmax);
 	fclose(fid);
 end
 fid = fopen([path name '_coco_1.txt'], 'w');

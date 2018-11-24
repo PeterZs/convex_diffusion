@@ -20,29 +20,29 @@ sym = symmetricDiffusion(p);
 sym.elapsed = toc;
 
 % Asymetric waveform
-p = parameters('asym');
-asym = convexDiffusion(p, 0, sym.n, 1);
-asym.elapsed = toc;
+p = parameters('code');
+code = convexDiffusion(p, 0, sym.n, 1);
+code.elapsed = toc;
 
 % Maxwell-compensated waveform
 p = parameters('coco');
-coco = convexDiffusion(p, asym.nEnc, sym.n, 1);
+coco = convexDiffusion(p, code.nEnc, sym.n, 1);
 coco.elapsed = toc;
 
 %% Calculate and display results
 sym = finalResults(sym);
 fprintf(['Symmetric:   ' sym.info '\n']);
 asym = finalResults(asym);
-fprintf(['Asymmetric:  ' asym.info '\n']);
+fprintf(['CODE:  ' code.info '\n']);
 coco = finalResults(coco);
-fprintf(['Concomitant: ' coco.info '\n']);
+fprintf(['COCO: ' coco.info '\n']);
 
 % Create plots
-h1 = plotGradients(sym, asym, coco);
-h2 = plotResiduals(sym, asym, coco);
+h1 = plotGradients(sym, code, coco);
+h2 = plotResiduals(sym, code, coco);
 
 % Save to disk
 if SAVE
-	saveResults(sym, asym, coco);
+	saveResults(sym, code, coco);
 	saveFigures(p, h1, h2);
 end
