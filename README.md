@@ -13,13 +13,11 @@ Install from Github source:
 ```
 git clone https://github.com/alen-mujkanovic/convex_diffusion.git
 git clone https://github.com/yalmip/YALMIP
-xcopy /s .\convex_diffusion\operators\@sdpvar\*.* .\YALMIP\@sdpvar
 ```
 ### Linux:
 ```
 git clone https://github.com/alen-mujkanovic/convex_diffusion.git
 git clone https://github.com/yalmip/YALMIP
-cp -a ./convex_diffusion/operators/@sdpvar/. ./YALMIP/@sdpvar
 ```
 
 
@@ -41,7 +39,7 @@ Alternatively, the code can be easily modified to use:
 If you use `convex_diffusion` in your research, you can cite it as follows:
 ```bibtex
 @misc{mujkanovic2018convexdiffusion,
-    author = {Alen Mujkanović},
+    author = {Alen Mujkanović, Chris Nguyen, David Sosnovik, Sebastian Kozerke},
     title = {convex_diffusion},
     year = {2018},
     publisher = {GitHub},
