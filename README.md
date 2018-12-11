@@ -8,13 +8,6 @@ It solves a quadratic optimization problem with convex constraints using semidef
 
 ## Installation
 Install from Github source:
-
-### Windows:
-```
-git clone https://github.com/alen-mujkanovic/convex_diffusion.git
-git clone https://github.com/yalmip/YALMIP
-```
-### Linux:
 ```
 git clone https://github.com/alen-mujkanovic/convex_diffusion.git
 git clone https://github.com/yalmip/YALMIP
